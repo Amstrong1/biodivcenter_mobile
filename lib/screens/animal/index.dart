@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Animal.dart';
 import 'package:biodivcenter/screens/animal/create.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _AnimalPageState extends State<AnimalPage> {
   Future<List<Animal>> fetchAnimals() async {
     final response = await http.get(
       Uri.parse(
-        'http://192.168.192.162:8000/api/individus/site_id=${(await SharedPreferences.getInstance()).getInt('site_id')!}',
+        '$apiBaseUrl/api/individus/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
       ),
     );
 
@@ -47,8 +48,10 @@ class _AnimalPageState extends State<AnimalPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const AddAnimalPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddAnimalPage()),
+              );
             },
           ),
         ],
@@ -64,15 +67,79 @@ class _AnimalPageState extends State<AnimalPage> {
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Text("Aucun animal trouvé");
             } else {
-              // Affiche la liste des animaux
               return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   Animal animal = snapshot.data![index];
-                  return ListTile(
-                    title: Text(animal.name),
-                    subtitle: Text("Espèce : ${animal.specie}"),
-                    leading: const Icon(Icons.pets),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 8.0,
+                    ),
+                    child: ListTile(
+                      tileColor: const Color(0xFFf1f4ef),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      title: Text(animal.name),
+                      subtitle: Text(animal.specieName),
+                      leading: animal.photo != null
+                          ? Image.network(
+                              '$apiBaseUrl/storage/${animal.photo!}',
+                            )
+                          : const Icon(Icons.pets),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.remove_red_eye,
+                              color: Colors.green,
+                              size: 15,
+                            ),
+                            onPressed: () {},
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                              size: 15,
+                            ),
+                            onPressed: () {
+                              http
+                                  .delete(
+                                Uri.parse(
+                                  '$apiBaseUrl/api/individus/${animal.id}',
+                                ),
+                              )
+                                  .then((response) {
+                                if (response.statusCode == 200) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Individu supprimé"),
+                                    ),
+                                  );
+                                  setState(() {
+                                    _animalList = fetchAnimals();
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Erreur lors de la suppression",
+                                      ),
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               );

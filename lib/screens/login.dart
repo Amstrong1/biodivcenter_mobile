@@ -1,4 +1,6 @@
+import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/auth_provider.dart';
+import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isSubmitting = false;
+  
+  final bool _isObscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -26,30 +30,39 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment:
                 MainAxisAlignment.center, // Centre les éléments dans la colonne
             children: [
-              const Text(
-                'Connexion',
+              Image.asset(
+                'assets/images/logo.png',
+                width: 150,
+                height: 150,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Veuillez vous identifiez',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
+                  color: Color(primaryColor),
+                  fontFamily: 'Merriweather',
                 ),
               ),
               const SizedBox(height: 20),
-              TextField(
+              CustomTextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(), // Ajoute des bordures
-                ),
+                labelText: 'Email',
               ),
               const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(), // Ajoute des bordures
-                ),
-                obscureText: true,
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextFormField(
+                      controller: _passwordController,
+                      labelText: 'Password',
+                      obscureText: _isObscureText,
+                    ),
+                  ),                  
+                ],
               ),
+              const SizedBox(height: 20),
               const SizedBox(height: 20),
               _isSubmitting
                   ? const CircularProgressIndicator() // Affiche l'indicateur de chargement si en cours de soumission
@@ -81,7 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (context.read<AuthProvider>().isAuthenticated) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (_) => HomeScreen()),
+                            MaterialPageRoute(
+                                builder: (_) => const HomeScreen()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

@@ -2,6 +2,8 @@ import 'package:biodivcenter/helpers/auth_provider.dart';
 import 'package:biodivcenter/screens/alimentation/index.dart';
 import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:biodivcenter/screens/login.dart';
+import 'package:biodivcenter/screens/observation/index.dart';
+import 'package:biodivcenter/screens/relocation/index.dart';
 import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
     SanitaryStatePage(),
     ReproductionPage(),
     AlimentationPage(),
+    RelocationPage(),
+    ObservationPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -71,6 +75,14 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.local_dining),
             label: 'Alimentation',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.move_down),
+            label: 'Transfert',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Observation',
           ),
         ],
         currentIndex: _selectedIndex,

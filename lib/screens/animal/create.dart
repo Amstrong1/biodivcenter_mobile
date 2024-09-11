@@ -1,4 +1,5 @@
 import 'package:biodivcenter/components/text_form_field.dart';
+import 'package:biodivcenter/helpers/global.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -41,8 +42,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
 
   // Fonction pour récupérer la liste des espèces depuis l'API
   Future<void> _fetchSpecies() async {
-    final response = await http
-        .get(Uri.parse('http://192.168.192.162:8000/api/species-list'));
+    final response = await http.get(Uri.parse('$apiBaseUrl/api/species-list'));
     if (response.statusCode == 200) {
       setState(() {
         _speciesList = jsonDecode(response.body);
@@ -52,8 +52,8 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
 
   // Fonction pour récupérer la liste des parents d'une espèce sélectionnée
   Future<void> _fetchParents(int specieId) async {
-    final response = await http.get(Uri.parse(
-        'http://192.168.192.162:8000/api/animals-list/specie_id=$specieId'));
+    final response = await http
+        .get(Uri.parse('$apiBaseUrl/api/animals-list/specie_id=$specieId'));
     if (response.statusCode == 200) {
       setState(() {
         _parentList = jsonDecode(response.body);
@@ -88,11 +88,15 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://192.168.192.162:8000/api/individus'),
+        Uri.parse('$apiBaseUrl/api/individu'),
       );
       // request.headers['Authorization'] =
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 
+      request.fields['ong_id'] =
+          (await SharedPreferences.getInstance()).getInt('ong_id').toString();
+      request.fields['site_id'] =
+          (await SharedPreferences.getInstance()).getInt('site_id').toString();
       request.fields['name'] = _nameController.text;
       request.fields['specie_id'] = _selectedSpecie!;
       request.fields['weight'] = _weightController.text;
@@ -101,7 +105,11 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
       request.fields['birthdate'] = _birthdateController.text;
       request.fields['description'] = _descriptionController.text;
       request.fields['origin'] = _originController.text;
-      request.fields['parent_id'] = _selectedParent!;
+      request.fields['slug'] = _nameController.text
+          .toLowerCase()
+          .replaceAll(RegExp(r'\s'), '-')
+          .replaceAll(RegExp(r'[^\w-]'), '');
+      // request.fields['parent_id'] = _selectedParent!;
 
       if (_selectedImage != null) {
         request.files.add(await http.MultipartFile.fromPath(
@@ -116,12 +124,13 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         _isLoading = false;
       });
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Animal enregistré avec succès !')),
         );
         _clearForm();
       } else {
+        print(response);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
         );

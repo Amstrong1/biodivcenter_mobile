@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:biodivcenter/helpers/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  static const String baseUrl = "http://192.168.192.162:8000/api";
+  static String baseUrl = "$apiBaseUrl/api";
 
   Future<bool> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/signin');
