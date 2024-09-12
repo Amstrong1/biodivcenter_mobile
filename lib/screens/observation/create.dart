@@ -1,5 +1,6 @@
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/observation/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -54,24 +55,21 @@ class _AddObservationPageState extends State<AddObservationPage> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Observation enregistré avec succès !')),
+          const SnackBar(
+            content: Text('Observation enregistrée avec succès !'),
+          ),
         );
-        _clearForm();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const ObservationPage()),
+        );
       } else {
-        print(response);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
+          const SnackBar(
+            content: Text('Erreur lors de l\'enregistrement'),
+          ),
         );
       }
     }
-  }
-
-  /// Clears all the form fields and reset the selected values
-  /// to `null`. This is used when the form is submitted and
-  /// the user wants to enter a new observation.
-  void _clearForm() {
-    _subjectController.clear();
-    _observationController.clear();
   }
 
   @override
@@ -98,25 +96,34 @@ class _AddObservationPageState extends State<AddObservationPage> {
                 },
               ),
               const SizedBox(height: 20),
-             CustomTextFormField(
+              CustomTextFormField(
                 controller: _observationController,
                 labelText: 'Observation',
+                maxLines: 6,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un l\'observation';
                   }
-                  if (double.tryParse(value) == null) {
-                    return 'Poids invalide';
-                  }
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               _isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(primaryColor),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
                       onPressed: _submitForm,
-                      child: const Text('Enregistrer'),
+                      child: const Text(
+                        'Enregistrer',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
             ],
           ),

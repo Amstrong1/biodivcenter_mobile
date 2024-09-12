@@ -7,6 +7,10 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String?)? validator;
   final bool obscureText;
   final TextInputType keyboardType;
+  final IconData? prefixIcon;
+  final bool readOnly;
+  final Function()? onTap;
+  final int maxLines;
 
   const CustomTextFormField({
     super.key,
@@ -15,6 +19,10 @@ class CustomTextFormField extends StatefulWidget {
     this.validator,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
+    this.prefixIcon,
+    this.readOnly = false,
+    this.onTap,
+    this.maxLines = 1,
   });
 
   @override
@@ -22,36 +30,62 @@ class CustomTextFormField extends StatefulWidget {
 }
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
-  bool _obscureText = false;
-
-  void _toggleObscureText() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
+  bool? _obscureText;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      cursorColor: Color(primaryColor),
       decoration: InputDecoration(
         labelText: widget.labelText,
-        border: const OutlineInputBorder(),
+        labelStyle: const TextStyle(
+          textBaseline: TextBaseline.alphabetic,
+          fontFamily: 'Poppins',
+          color: Colors.black,
+          fontSize: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Color(accentColor),
+        prefixIcon: widget.prefixIcon != null
+            ? Icon(
+                widget.prefixIcon,
+                color: Color(primaryColor),
+              )
+            : null,
         suffixIcon: widget.obscureText
             ? IconButton(
-                icon: Icon(Icons.visibility, color: Color(primaryColor)),
+                icon: Icon(
+                  widget.obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Color(primaryColor),
+                ),
                 onPressed: () {
                   setState(() {
-                    _obscureText = !_obscureText;
+                    if (_obscureText == null) {
+                      _obscureText = !widget.obscureText;
+                    } else {
+                      _obscureText = !_obscureText!;
+                    }
                   });
                 },
               )
             : null,
       ),
-      obscureText: _obscureText,
+      obscureText: _obscureText ?? widget.obscureText,
       keyboardType: widget.keyboardType,
       validator: widget.validator,
-      style: const TextStyle(fontFamily: 'Poppins'),
+      readOnly: widget.readOnly,
+      onTap: widget.onTap,
+      maxLines: widget.maxLines,
+      style: const TextStyle(
+        fontFamily: 'Poppins',
+        color: Colors.black,
+        fontSize: 12,
+      ),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:biodivcenter/helpers/auth_provider.dart';
-import 'package:biodivcenter/screens/home.dart';
+import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:biodivcenter/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,12 +13,24 @@ class SplashScreen extends StatelessWidget {
       builder: (context, auth, _) {
         if (auth.isAuthenticated) {
           // Si l'utilisateur est authentifié, redirige vers la page d'accueil
-          Future.microtask(() => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const HomeScreen())));
+          Future.microtask(
+            () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AnimalPage(),
+              ),
+            ),
+          );
         } else {
           // Sinon, redirige vers la page de connexion
-          Future.microtask(() => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const LoginScreen())));
+          Future.microtask(
+            () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const LoginScreen(),
+              ),
+            ),
+          );
         }
 
         // Pendant que l'authentification est en cours de vérification, affiche un écran temporaire

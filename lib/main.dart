@@ -14,8 +14,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AuthProvider()..checkAuthStatus(),
-      child: const MaterialApp(
-        home: SplashScreen(),
+      child: MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          fontFamily: 'Poppins',
+          brightness: Brightness.light,
+        ),
+        // debugShowCheckedModeBanner: false,
+        home: const SplashScreen(),
       ),
     );
   }

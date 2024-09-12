@@ -1,8 +1,10 @@
 import 'dart:convert';
-
+import 'package:biodivcenter/components/circular_progess_indicator.dart';
+import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Animal.dart';
 import 'package:biodivcenter/screens/animal/create.dart';
+import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,112 +43,143 @@ class _AnimalPageState extends State<AnimalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Liste des Animaux'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AddAnimalPage()),
-              );
-            },
-          ),
-        ],
-      ),
+    return BaseScaffold(
       body: Center(
         child: FutureBuilder<List<Animal>>(
           future: _animalList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return const CustomCircularProgessIndicator();
             } else if (snapshot.hasError) {
               return Text("Erreur : ${snapshot.error}");
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Text("Aucun animal trouvé");
+              return Column(
+                children: [
+                  header(),
+                  const SizedBox(height: 20.0),
+                  const Text("Aucun animal trouvé"),
+                ],
+              );
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  Animal animal = snapshot.data![index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 8.0,
-                    ),
-                    child: ListTile(
-                      tileColor: const Color(0xFFf1f4ef),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      title: Text(animal.name),
-                      subtitle: Text(animal.specieName),
-                      leading: animal.photo != null
-                          ? Image.network(
-                              '$apiBaseUrl/storage/${animal.photo!}',
-                            )
-                          : const Icon(Icons.pets),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.remove_red_eye,
-                              color: Colors.green,
-                              size: 15,
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 8.0,
+                ),
+                child: Column(
+                  children: [
+                    header(),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          Animal animal = snapshot.data![index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: CustomListTile(
+                              title: animal.name,
+                              subtitle: [animal.specieName],
+                              onViewPressed: () {},
+                              onDeletePressed: () {
+                                deleteResource(animal.id);
+                              },
+                              photo: animal.photo,
                             ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                              size: 15,
-                            ),
-                            onPressed: () {
-                              http
-                                  .delete(
-                                Uri.parse(
-                                  '$apiBaseUrl/api/individus/${animal.id}',
-                                ),
-                              )
-                                  .then((response) {
-                                if (response.statusCode == 200) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Individu supprimé"),
-                                    ),
-                                  );
-                                  setState(() {
-                                    _animalList = fetchAnimals();
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Erreur lors de la suppression",
-                                      ),
-                                    ),
-                                  );
-                                }
-                              });
-                            },
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
+                  ],
+                ),
               );
             }
           },
         ),
       ),
     );
+  }
+
+  Widget header() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Liste',
+              style: TextStyle(
+                fontFamily: 'Merriweather',
+                color: Color(primaryColor),
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            Text(
+              'des Individus',
+              style: TextStyle(
+                fontFamily: 'Merriweather',
+                color: Color(primaryColor),
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+          ],
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AddAnimalPage(),
+              ),
+            );
+          },
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text(
+            "Ajouter",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(primaryColor),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void deleteResource(int id) {
+    try {
+      http
+          .delete(
+        Uri.parse(
+          '$apiBaseUrl/api/individu/$id',
+        ),
+      )
+          .then(
+        (response) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Individu supprimé"),
+            ),
+          );
+          setState(() {
+            _animalList = fetchAnimals();
+          });
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Erreur lors de la suppression",
+          ),
+        ),
+      );
+      print(e.toString());
+    }
   }
 }

@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:biodivcenter/components/circular_progess_indicator.dart';
+import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Relocation.dart';
+import 'package:biodivcenter/screens/base.dart';
+import 'package:biodivcenter/screens/relocation/create.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,7 +20,7 @@ class RelocationPage extends StatefulWidget {
 class _RelocationPageState extends State<RelocationPage> {
   late Future<List<Relocation>> _relocationList;
 
-  // Fonction pour récupérer la liste des animaux depuis l'API
+  // Fonction pour récupérer la liste des relocations depuis l'API
   Future<List<Relocation>> fetchRelocations() async {
     final response = await http.get(
       Uri.parse(
@@ -26,7 +30,9 @@ class _RelocationPageState extends State<RelocationPage> {
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((relocation) => Relocation.fromJson(relocation)).toList();
+      return jsonResponse
+          .map((relocation) => Relocation.fromJson(relocation))
+          .toList();
     } else {
       throw Exception('Failed to load data');
     }
@@ -40,107 +46,148 @@ class _RelocationPageState extends State<RelocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Relocation des espèces'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (_) => const AddRelocationPage()),
-              // );
-            },
-          ),
-        ],
-      ),
+    return BaseScaffold(
       body: Center(
         child: FutureBuilder<List<Relocation>>(
           future: _relocationList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return const CustomCircularProgessIndicator();
             } else if (snapshot.hasError) {
               return Text("Erreur : ${snapshot.error}");
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Text("Aucune relocation trouvé");
+              return Column(
+                children: [
+                  header(),
+                  const SizedBox(height: 20.0),
+                  const Text("Aucun transfert trouvé"),
+                ],
+              );
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  Relocation relocation = snapshot.data![index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0,
-                      vertical: 8.0,
-                    ),
-                    child: ListTile(
-                      tileColor: const Color(0xFFf1f4ef),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      title: Text(relocation.animalName),
-                      subtitle: Text("Date : ${relocation.date}"),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.remove_red_eye,
-                              color: Colors.green,
-                              size: 15,
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 8.0,
+                ),
+                child: Column(
+                  children: [
+                    header(),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          Relocation relocation = snapshot.data![index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: CustomListTile(
+                              title: relocation.animalName,
+                              subtitle: [relocation.date],
+                              onViewPressed: () {
+                                // Code pour afficher la relocation
+                              },
+                              onDeletePressed: () {
+                                deleteResource(relocation.id);
+                              },
                             ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                              size: 15,
-                            ),
-                            onPressed: () {
-                              http
-                                  .delete(
-                                Uri.parse(
-                                  '$apiBaseUrl/api/relocations/${relocation.id}',
-                                ),
-                              )
-                                  .then((response) {
-                                if (response.statusCode == 200) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Données supprimées"),
-                                    ),
-                                  );
-                                  setState(() {
-                                    _relocationList = fetchRelocations();
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Erreur lors de la suppression",
-                                      ),
-                                    ),
-                                  );
-                                }
-                              });
-                            },
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
-                  );
-                },
+                  ],
+                ),
               );
             }
           },
         ),
       ),
     );
+  }
+
+  Widget header() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Liste',
+              style: TextStyle(
+                fontFamily: 'Merriweather',
+                color: Color(primaryColor),
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            Text(
+              'des Transferts',
+              style: TextStyle(
+                fontFamily: 'Merriweather',
+                color: Color(primaryColor),
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+          ],
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const AddRelocationPage(),
+              ),
+            );
+          },
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text(
+            "Ajouter",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(primaryColor),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void deleteResource(int id) {
+    try {
+      http
+          .delete(
+        Uri.parse(
+          '$apiBaseUrl/api/api-relocations/$id',
+        ),
+      )
+          .then((response) {
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Données supprimées"),
+            ),
+          );
+          setState(() {
+            _relocationList = fetchRelocations();
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Erreur lors de la suppression"),
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Erreur lors de la suppression"),
+        ),
+      );
+      print(e.toString());
+    }
   }
 }

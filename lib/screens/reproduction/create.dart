@@ -1,5 +1,8 @@
+import 'package:biodivcenter/components/date_field.dart';
+import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -17,8 +20,8 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _phaseController = TextEditingController();
   final TextEditingController _litterSizeController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
   final TextEditingController _observationController = TextEditingController();
+  String? _selectedDate;
 
   bool _isLoading = false;
 
@@ -34,7 +37,11 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
 
   // Fonction pour récupérer la liste des espèces depuis l'API
   Future<void> _fetchAnimals() async {
-    final response = await http.get(Uri.parse('$apiBaseUrl/api/animals-list'));
+    final response = await http.get(
+      Uri.parse(
+        '$apiBaseUrl/api/individus/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
+      ),
+    );
     if (response.statusCode == 200) {
       setState(() {
         _animalsList = jsonDecode(response.body);
@@ -71,7 +78,7 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
       request.fields['animal_id'] = _selectedAnimal!;
       request.fields['phase'] = _phaseController.text;
       request.fields['litter_size'] = _litterSizeController.text;
-      request.fields['date'] = _dateController.text;
+      request.fields['date'] = _selectedDate!;
       request.fields['observation'] = _observationController.text;
       request.fields['slug'] = '';
 
@@ -83,28 +90,21 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Reproduction enregistré avec succès !')),
+          const SnackBar(
+            content: Text('Reproduction enregistré avec succès !'),
+          ),
         );
-        _clearForm();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const ReproductionPage()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
+          const SnackBar(
+            content: Text('Erreur lors de l\'enregistrement'),
+          ),
         );
       }
     }
-  }
-
-  /// Clears all the form fields and reset the selected values
-  /// to `null`. This is used when the form is submitted and
-  /// the user wants to enter a new animal.
-  void _clearForm() {
-    _phaseController.clear();
-    _litterSizeController.clear();
-    _dateController.clear();
-    _observationController.clear();
-    setState(() {
-      _selectedAnimal = null;
-    });
   }
 
   @override
@@ -120,48 +120,38 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
             key: _formKey,
             child: Column(
               children: [
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Animal'),
-                  value: _selectedAnimal,
-                  items: _animalsList.map<DropdownMenuItem<String>>((animal) {
-                    return DropdownMenuItem<String>(
-                      value: animal['id'].toString(),
-                      child: Text(animal['name']),
-                    );
-                  }).toList(),
+                CustomDropdown(
+                  itemList: _animalsList,
+                  selectedItem: _selectedAnimal,
                   onChanged: (value) {
                     setState(() {
                       _selectedAnimal = value;
                     });
                   },
                   validator: (value) {
-                    if (value == null) {
-                      return 'Veuillez sélectionner une espèce';
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez sélectionner un individu';
                     }
                     return null;
                   },
+                  label: 'Individu',
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Phase'),
-                  value: _selectedPhase,
-                  items: _phaseOptions.map<DropdownMenuItem<String>>((phase) {
-                    return DropdownMenuItem<String>(
-                      value: phase,
-                      child: Text(phase),
-                    );
-                  }).toList(),
+                CustomDropdown(
+                  itemList: _phaseOptions,
+                  selectedItem: _selectedPhase,
                   onChanged: (value) {
                     setState(() {
                       _selectedPhase = value;
                     });
                   },
                   validator: (value) {
-                    if (value == null) {
+                    if (value == null || value.isEmpty) {
                       return 'Veuillez sélectionner une phase';
                     }
                     return null;
                   },
+                  label: 'Phase',
                 ),
                 const SizedBox(height: 20),
                 CustomTextFormField(
@@ -178,27 +168,37 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                CustomTextFormField(
-                  controller: _dateController,
-                  labelText: 'Date',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer une date';
-                    }
-                    return null;
+                DatePickerFormField(
+                  labelText: 'Date de transfert',
+                  onDateSelected: (selectedDate) {
+                    setState(() {
+                      _selectedDate = selectedDate;
+                    });
                   },
                 ),
                 const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: _observationController,
                   labelText: 'Observation',
+                  maxLines: 8,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 _isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(primaryColor),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
                         onPressed: _submitForm,
-                        child: const Text('Enregistrer'),
+                        child: const Text(
+                          'Enregistrer',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
               ],
             ),

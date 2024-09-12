@@ -1,5 +1,9 @@
+import 'package:biodivcenter/components/circular_progess_indicator.dart';
+import 'package:biodivcenter/components/date_field.dart';
+import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -21,10 +25,9 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
-  final TextEditingController _birthdateController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _photoController = TextEditingController();
   final TextEditingController _originController = TextEditingController();
+  String? _selectedDate;
 
   bool _isLoading = false;
 
@@ -53,7 +56,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
   // Fonction pour récupérer la liste des parents d'une espèce sélectionnée
   Future<void> _fetchParents(int specieId) async {
     final response = await http
-        .get(Uri.parse('$apiBaseUrl/api/animals-list/specie_id=$specieId'));
+        .get(Uri.parse('$apiBaseUrl/api/parents/$specieId'));
     if (response.statusCode == 200) {
       setState(() {
         _parentList = jsonDecode(response.body);
@@ -102,7 +105,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
       request.fields['weight'] = _weightController.text;
       request.fields['height'] = _heightController.text;
       request.fields['sex'] = _selectedSex!;
-      request.fields['birthdate'] = _birthdateController.text;
+      request.fields['birthdate'] = _selectedDate!;
       request.fields['description'] = _descriptionController.text;
       request.fields['origin'] = _originController.text;
       request.fields['slug'] = _nameController.text
@@ -126,34 +129,21 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Animal enregistré avec succès !')),
+          const SnackBar(
+            content: Text('Animal enregistré avec succès !'),
+          ),
         );
-        _clearForm();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const AnimalPage()),
+        );
       } else {
-        print(response);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
+          const SnackBar(
+            content: Text('Erreur lors de l\'enregistrement'),
+          ),
         );
       }
     }
-  }
-
-  /// Clears all the form fields and reset the selected values
-  /// to `null`. This is used when the form is submitted and
-  /// the user wants to enter a new animal.
-  void _clearForm() {
-    _nameController.clear();
-    _weightController.clear();
-    _heightController.clear();
-    _birthdateController.clear();
-    _descriptionController.clear();
-    _photoController.clear();
-    _originController.clear();
-    setState(() {
-      _selectedSpecie = null;
-      _selectedParent = null;
-      _selectedSex = null;
-    });
   }
 
   @override
@@ -163,184 +153,170 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         title: const Text('Ajouter un individu'),
       ),
       body: SingleChildScrollView(
-          child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              CustomTextFormField(
-                controller: _nameController,
-                labelText: 'Nom de l\'animal',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un nom';
-                  }
-                  if (value.length < 3) {
-                    return 'Le nom doit contenir au moins 3 caractères';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Espèce'),
-                value: _selectedSpecie,
-                items: _speciesList.map<DropdownMenuItem<String>>((specie) {
-                  return DropdownMenuItem<String>(
-                    value: specie['id'].toString(),
-                    child: Text(specie['french_name']),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedSpecie = value;
-                    _fetchParents(
-                      int.parse(value!),
-                    );
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Veuillez sélectionner une espèce';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomTextFormField(
-                controller: _weightController,
-                labelText: 'Poids',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un poids';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Poids invalide';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomTextFormField(
-                controller: _heightController,
-                labelText: 'Taille',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une taille';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Taille invalide';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Sexe'),
-                value: _selectedSex,
-                items: _sexOptions.map<DropdownMenuItem<String>>((sex) {
-                  return DropdownMenuItem<String>(
-                    value: sex,
-                    child: Text(sex),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedSex = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null) {
-                    return 'Veuillez sélectionner le sexe';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomTextFormField(
-                controller: _birthdateController,
-                labelText: 'Date de naissance',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une date de naissance';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              CustomTextFormField(
-                controller: _descriptionController,
-                labelText: 'Description',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une description';
-                  }
-                  if (value.length < 3) {
-                    return 'La description doit contenir au moins 3 caractères';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Parent'),
-                value: _selectedParent,
-                items: _parentList.map<DropdownMenuItem<String>>((parent) {
-                  return DropdownMenuItem<String>(
-                    value: parent['id'].toString(),
-                    child: Text(parent['name']),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedParent = value;
-                  });
-                },
-                // validator: (value) {
-                //   if (value == null) {
-                //     return 'Veuillez sélectionner un parent';
-                //   }
-                //   return null;
-                // },
-              ),
-              const SizedBox(height: 20),
-              CustomTextFormField(
-                controller: _originController,
-                labelText: 'Origine',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une origine';
-                  }
-                  if (value.length < 3) {
-                    return 'L\'origine doit contenir au moins 3 caractères';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: _selectImage,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  color: Colors.grey[200],
-                  child: _selectedImage != null
-                      ? Image.file(_selectedImage!, fit: BoxFit.cover)
-                      : const Icon(Icons.add_a_photo, size: 50),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomTextFormField(
+                  controller: _nameController,
+                  labelText: 'Nom de l\'animal',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un nom';
+                    }
+                    if (value.length < 3) {
+                      return 'Le nom doit contenir au moins 3 caractères';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              const SizedBox(height: 20),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _submitForm,
-                      child: const Text('Enregistrer'),
-                    ),
-            ],
+                const SizedBox(height: 20),
+                CustomDropdown(
+                  itemList: _speciesList,
+                  selectedItem: _selectedSpecie,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedSpecie = value;
+                      _fetchParents(int.parse(value!));
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez choisir une espèce';
+                    }
+                    return null;
+                  },
+                  label: 'Espèce',
+                ),
+                const SizedBox(height: 20),
+                CustomTextFormField(
+                  controller: _weightController,
+                  labelText: 'Poids(kg)',
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un poids';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Poids invalide';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                CustomTextFormField(
+                  controller: _heightController,
+                  labelText: 'Taille(cm)',
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une taille';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Taille invalide';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                CustomDropdown(
+                  itemList: _sexOptions,
+                  selectedItem: _selectedSex,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedSex = value;
+                    });
+                  },
+                  label: 'Sexe',
+                ),
+                const SizedBox(height: 20),
+                DatePickerFormField(
+                  labelText: 'Date de naissance',
+                  onDateSelected: (selectedDate) {
+                    setState(() {
+                      _selectedDate = selectedDate;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                CustomTextFormField(
+                  controller: _descriptionController,
+                  labelText: 'Description',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une description';
+                    }
+                    if (value.length < 3) {
+                      return 'La description doit contenir au moins 3 caractères';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                CustomDropdown(
+                  itemList: _parentList,
+                  selectedItem: _selectedParent,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedParent = value;
+                    });
+                  },
+                  label: 'Parent',
+                ),
+                const SizedBox(height: 20),
+                CustomTextFormField(
+                  controller: _originController,
+                  labelText: 'Origine',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer une origine';
+                    }
+                    if (value.length < 3) {
+                      return 'L\'origine doit contenir au moins 3 caractères';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                const Text('Photo de l\'animal :'),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: _selectImage,
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.grey[200],
+                    child: _selectedImage != null
+                        ? Image.file(_selectedImage!, fit: BoxFit.cover)
+                        : const Icon(Icons.add_a_photo, size: 50),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                _isLoading
+                    ? const CustomCircularProgessIndicator()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(primaryColor),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                        onPressed: _submitForm,
+                        child: const Text(
+                          'Enregistrer',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

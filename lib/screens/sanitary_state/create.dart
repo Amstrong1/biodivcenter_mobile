@@ -1,5 +1,7 @@
+import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,10 +12,10 @@ class AddSanitaryState extends StatefulWidget {
   const AddSanitaryState({super.key});
 
   @override
-  _AddSanitaryStateState createState() => _AddSanitaryStateState();
+  AddSanitaryStatePage createState() => AddSanitaryStatePage();
 }
 
-class _AddSanitaryStateState extends State<AddSanitaryState> {
+class AddSanitaryStatePage extends State<AddSanitaryState> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _labelController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -31,7 +33,11 @@ class _AddSanitaryStateState extends State<AddSanitaryState> {
 
   // Fonction pour récupérer la liste des espèces depuis l'API
   Future<void> _fetchAnimals() async {
-    final response = await http.get(Uri.parse('$apiBaseUrl/api/animals-list'));
+    final response = await http.get(
+      Uri.parse(
+        '$apiBaseUrl/api/individus/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
+      ),
+    );
     if (response.statusCode == 200) {
       setState(() {
         _animalsList = jsonDecode(response.body);
@@ -89,29 +95,15 @@ class _AddSanitaryStateState extends State<AddSanitaryState> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Animal enregistré avec succès !')),
         );
-        _clearForm();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SanitaryStatePage()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
         );
       }
     }
-  }
-
-  /// Clears all the form fields and reset the selected values
-  /// to `null`. This is used when the form is submitted and
-  /// the user wants to enter a new animal.
-  void _clearForm() {
-    _labelController.clear();
-    _descriptionController.clear();
-    _correctiveActionController.clear();
-    _costController.clear();
-    _temperatureController.clear();
-    _heightController.clear();
-    _weightController.clear();
-    setState(() {
-      _selectedAnimal = null;
-    });
   }
 
   @override
@@ -127,26 +119,21 @@ class _AddSanitaryStateState extends State<AddSanitaryState> {
           key: _formKey,
           child: Column(
             children: [
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(labelText: 'Animal'),
-                value: _selectedAnimal,
-                items: _animalsList.map<DropdownMenuItem<String>>((animal) {
-                  return DropdownMenuItem<String>(
-                    value: animal['id'].toString(),
-                    child: Text(animal['name']),
-                  );
-                }).toList(),
+              CustomDropdown(
+                itemList: _animalsList,
+                selectedItem: _selectedAnimal,
                 onChanged: (value) {
                   setState(() {
                     _selectedAnimal = value;
                   });
                 },
                 validator: (value) {
-                  if (value == null) {
+                  if (value == null || value.isEmpty) {
                     return 'Veuillez sélectionner un animal';
                   }
                   return null;
                 },
+                label: 'Animal',
               ),
               const SizedBox(height: 20),
               CustomTextFormField(

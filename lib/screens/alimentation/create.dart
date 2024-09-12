@@ -1,5 +1,8 @@
+import 'package:biodivcenter/components/circular_progess_indicator.dart';
+import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/alimentation/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -73,62 +76,56 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
       // request.headers['Authorization'] =
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 
-      request.fields['ong_id'] =
-          (await SharedPreferences.getInstance()).getInt('ong_id').toString();
-      request.fields['site_id'] =
-          (await SharedPreferences.getInstance()).getInt('site_id').toString();
-      request.fields['user_id'] =
-          (await SharedPreferences.getInstance()).getInt('user_id').toString();
-      request.fields['specie_id'] = _selectedSpecie!;
-      request.fields['age_range'] = _selectedAge!;
-      request.fields['food'] = _foodController.text;
-      request.fields['period'] = _selectedPeriod!;
-      request.fields['quantity'] = _quantityController.text;
-      request.fields['cost'] = _costController.text;
-      request.fields['slug'] = _foodController.text
-          .toLowerCase()
-          .replaceAll(RegExp(r'\s'), '-')
-          .replaceAll(RegExp(r'[^\w-]'), '');
+      try {
+        request.fields['ong_id'] =
+            (await SharedPreferences.getInstance()).getInt('ong_id').toString();
+        request.fields['site_id'] = (await SharedPreferences.getInstance())
+            .getInt('site_id')
+            .toString();
+        request.fields['user_id'] = (await SharedPreferences.getInstance())
+            .getInt('user_id')
+            .toString();
+        request.fields['specie_id'] = _selectedSpecie!;
+        request.fields['age_range'] = _selectedAge!;
+        request.fields['food'] = _foodController.text;
+        request.fields['frequency'] = _selectedPeriod!;
+        request.fields['quantity'] = _quantityController.text;
+        request.fields['cost'] = _costController.text;
+        request.fields['slug'] = _foodController.text
+            .toLowerCase()
+            .replaceAll(RegExp(r'\s'), '-')
+            .replaceAll(RegExp(r'[^\w-]'), '');
 
-      final response = await request.send();
+        await request.send();
 
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Alimentation enregistré avec succès !'),
           ),
         );
-        _clearForm();
-      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const AlimentationPage()),
+        );
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
         );
+        setState(() {
+          _isLoading = false;
+        });
+        print(e.toString());
       }
     }
-  }
-
-  /// Clears all the form fields and reset the selected values
-  /// to `null`. This is used when the form is submitted and
-  /// the user wants to enter a new animal.
-  void _clearForm() {
-    _foodController.clear();
-    _quantityController.clear();
-    _costController.clear();
-    setState(() {
-      _selectedSpecie = null;
-      _selectedPeriod = null;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter un individu'),
+        title: const Text(
+          'Ajouter une alimentation',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -148,75 +145,42 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Espèce'),
-                  value: _selectedSpecie,
-                  items: _speciesList.map<DropdownMenuItem<String>>((specie) {
-                    return DropdownMenuItem<String>(
-                      value: specie['id'].toString(),
-                      child: Text(specie['french_name']),
-                    );
-                  }).toList(),
+                CustomDropdown(
+                  itemList: _speciesList,
+                  selectedItem: _selectedSpecie,
                   onChanged: (value) {
                     setState(() {
                       _selectedSpecie = value;
                     });
                   },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Veuillez sélectionner une espèce';
-                    }
-                    return null;
-                  },
+                  label: 'Espèce',
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Age'),
-                  value: _selectedAge,
-                  items: _ageOptions.map<DropdownMenuItem<String>>((age) {
-                    return DropdownMenuItem<String>(
-                      value: age,
-                      child: Text(age),
-                    );
-                  }).toList(),
+                CustomDropdown(
+                  itemList: _ageOptions,
+                  selectedItem: _selectedAge,
                   onChanged: (value) {
                     setState(() {
                       _selectedAge = value;
                     });
                   },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Veuillez sélectionner la tranche d\'age';
-                    }
-                    return null;
-                  },
+                  label: 'Age',
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Période'),
-                  value: _selectedPeriod,
-                  items: _periodOptions.map<DropdownMenuItem<String>>((period) {
-                    return DropdownMenuItem<String>(
-                      value: period,
-                      child: Text(period),
-                    );
-                  }).toList(),
+                CustomDropdown(
+                  itemList: _periodOptions,
+                  selectedItem: _selectedPeriod,
                   onChanged: (value) {
                     setState(() {
                       _selectedPeriod = value;
                     });
                   },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Veuillez sélectionner une période';
-                    }
-                    return null;
-                  },
+                  label: 'Période',
                 ),
                 const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: _quantityController,
-                  labelText: 'Quantité',
+                  labelText: 'Quantité(kg)',
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -228,7 +192,7 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
                 const SizedBox(height: 20),
                 CustomTextFormField(
                   controller: _costController,
-                  labelText: 'Coût',
+                  labelText: 'Coût(XOF)',
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -237,12 +201,23 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 _isLoading
-                    ? const CircularProgressIndicator()
+                    ? const CustomCircularProgessIndicator()
                     : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(primaryColor),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
                         onPressed: _submitForm,
-                        child: const Text('Enregistrer'),
+                        child: const Text(
+                          'Enregistrer',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
               ],
             ),

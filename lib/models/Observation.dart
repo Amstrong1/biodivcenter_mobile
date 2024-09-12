@@ -14,7 +14,7 @@ class Observation {
     return Observation(
       id: json['id'],
       subject: json['subject'],
-      date: json['created_at'],
+      date: json['formated_date'],
     );
   }
 }
