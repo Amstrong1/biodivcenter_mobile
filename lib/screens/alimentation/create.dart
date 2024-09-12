@@ -76,28 +76,30 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
       // request.headers['Authorization'] =
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 
-      try {
-        request.fields['ong_id'] =
-            (await SharedPreferences.getInstance()).getInt('ong_id').toString();
-        request.fields['site_id'] = (await SharedPreferences.getInstance())
-            .getInt('site_id')
-            .toString();
-        request.fields['user_id'] = (await SharedPreferences.getInstance())
-            .getInt('user_id')
-            .toString();
-        request.fields['specie_id'] = _selectedSpecie!;
-        request.fields['age_range'] = _selectedAge!;
-        request.fields['food'] = _foodController.text;
-        request.fields['frequency'] = _selectedPeriod!;
-        request.fields['quantity'] = _quantityController.text;
-        request.fields['cost'] = _costController.text;
-        request.fields['slug'] = _foodController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), '');
+      request.fields['ong_id'] =
+          (await SharedPreferences.getInstance()).getInt('ong_id').toString();
+      request.fields['site_id'] =
+          (await SharedPreferences.getInstance()).getInt('site_id').toString();
+      request.fields['user_id'] =
+          (await SharedPreferences.getInstance()).getInt('id').toString();
+      request.fields['specie_id'] = _selectedSpecie!;
+      request.fields['age_range'] = _selectedAge!;
+      request.fields['food'] = _foodController.text;
+      request.fields['frequency'] = _selectedPeriod!;
+      request.fields['quantity'] = _quantityController.text;
+      request.fields['cost'] = _costController.text;
+      request.fields['slug'] = _foodController.text
+          .toLowerCase()
+          .replaceAll(RegExp(r'\s'), '-')
+          .replaceAll(RegExp(r'[^\w-]'), '');
 
-        await request.send();
+      final response = await request.send();
 
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Alimentation enregistré avec succès !'),
@@ -106,14 +108,10 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const AlimentationPage()),
         );
-      } catch (e) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
         );
-        setState(() {
-          _isLoading = false;
-        });
-        print(e.toString());
       }
     }
   }

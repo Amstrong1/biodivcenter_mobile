@@ -1,3 +1,4 @@
+import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
@@ -68,7 +69,7 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 
       request.fields['user_id'] =
-          (await SharedPreferences.getInstance()).getInt('user_id').toString();
+          (await SharedPreferences.getInstance()).getInt('id').toString();
       request.fields['ong_id'] =
           (await SharedPreferences.getInstance()).getInt('ong_id').toString();
       request.fields['site_id'] =
@@ -85,23 +86,33 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
           .toLowerCase()
           .replaceAll(RegExp(r'\s'), '-')
           .replaceAll(RegExp(r'[^\w-]'), '');
+
       final response = await request.send();
 
-      setState(() {
-        _isLoading = false;
-      });
+      print(request.fields);
 
       if (response.statusCode == 200) {
+        setState(() {
+          _isLoading = false;
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Animal enregistré avec succès !')),
         );
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const SanitaryStatePage()),
+          MaterialPageRoute(
+            builder: (context) => const SanitaryStatePage(),
+          ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erreur lors de l\'enregistrement')),
+          const SnackBar(
+            content: Text('Erreur lors de l\'enregistrement'),
+          ),
         );
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -162,33 +173,50 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
+                controller: _temperatureController,
+                labelText: 'Température(°C)',
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 20),
+              CustomTextFormField(
                 controller: _correctiveActionController,
                 labelText: 'Action corrective',
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
                 controller: _costController,
-                labelText: 'Cout',
+                labelText: 'Cout(XOF)',
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
                 controller: _heightController,
-                labelText: 'Taille',
+                labelText: 'Taille(cm)',
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 20),
               CustomTextFormField(
                 controller: _weightController,
-                labelText: 'Poids',
+                labelText: 'Poids(kg)',
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               _isLoading
-                  ? const CircularProgressIndicator()
+                  ? const CustomCircularProgessIndicator()
                   : ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(primaryColor),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
                       onPressed: _submitForm,
-                      child: const Text('Enregistrer'),
+                      child: const Text(
+                        'Enregistrer',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
             ],
           ),

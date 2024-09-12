@@ -1,3 +1,4 @@
+import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/date_field.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
@@ -18,7 +19,6 @@ class AddReproductionPage extends StatefulWidget {
 
 class _AddReproductionPageState extends State<AddReproductionPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _phaseController = TextEditingController();
   final TextEditingController _litterSizeController = TextEditingController();
   final TextEditingController _observationController = TextEditingController();
   String? _selectedDate;
@@ -76,13 +76,15 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
       request.fields['site_id'] =
           (await SharedPreferences.getInstance()).getInt('site_id').toString();
       request.fields['animal_id'] = _selectedAnimal!;
-      request.fields['phase'] = _phaseController.text;
+      request.fields['phase'] = _selectedPhase!;
       request.fields['litter_size'] = _litterSizeController.text;
       request.fields['date'] = _selectedDate!;
       request.fields['observation'] = _observationController.text;
-      request.fields['slug'] = '';
+      request.fields['slug'] = 'reproduction$_selectedAnimal';
 
       final response = await request.send();
+
+      print(request.fields);
 
       setState(() {
         _isLoading = false;
@@ -157,19 +159,20 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
                 CustomTextFormField(
                   controller: _litterSizeController,
                   labelText: 'Portée',
+                  keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez entrer une portée';
                     }
                     if (double.tryParse(value) == null) {
-                      return 'Taille invalide';
+                      return 'Portée invalide';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 20),
                 DatePickerFormField(
-                  labelText: 'Date de transfert',
+                  labelText: 'Date de reproduction',
                   onDateSelected: (selectedDate) {
                     setState(() {
                       _selectedDate = selectedDate;
@@ -184,7 +187,7 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
                 ),
                 const SizedBox(height: 40),
                 _isLoading
-                    ? const CircularProgressIndicator()
+                    ? const CustomCircularProgessIndicator()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(primaryColor),
