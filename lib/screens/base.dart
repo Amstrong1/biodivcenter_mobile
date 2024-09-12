@@ -1,4 +1,6 @@
 import 'package:biodivcenter/helpers/auth_provider.dart';
+import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/account.dart';
 import 'package:biodivcenter/screens/alimentation/index.dart';
 import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:biodivcenter/screens/login.dart';
@@ -6,6 +8,7 @@ import 'package:biodivcenter/screens/observation/index.dart';
 import 'package:biodivcenter/screens/relocation/index.dart';
 import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
+import 'package:biodivcenter/screens/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,31 +26,44 @@ class BaseScaffold extends StatelessWidget {
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
-            return IconButton(
-              icon: const Icon(
-                Icons.menu,
-                color: Colors.green,
-                size: 50,
+            return Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.menu,
+                  color: Colors.green,
+                  size: 50,
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
               ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
             );
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.person,
-              color: Colors.black,
-              size: 50,
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: IconButton(
+              icon: const Icon(
+                Icons.person,
+                color: Colors.black,
+                size: 50,
+              ),
+              onPressed: () {},
             ),
-            onPressed: () {},
           ),
         ],
       ),
       drawer: const MainDrawer(),
-      body: Padding(padding: const EdgeInsets.all(16.0), child: body),
+      body: Padding(
+        padding: const EdgeInsets.only(
+          right: 32.0,
+          left: 32.0,
+          top: 32.0,
+        ),
+        child: body,
+      ),
     );
   }
 }
@@ -61,27 +77,19 @@ class MainDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.green,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 40,
-                  child: Icon(Icons.person, size: 50, color: Colors.green),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Nom de l\'utilisateur',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+          const SizedBox(
+            height: 150,
+            child: DrawerHeader(
+              margin: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image(
+                    image: AssetImage('assets/images/logo.png'),
+                    width: 150,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           ListTile(
@@ -150,26 +158,32 @@ class MainDrawer extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Paramètres'),
-            onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => SettingsPage(),
-              //   ),
-              // );
-            },
+          Divider(
+            thickness: 2,
+            indent: 20,
+            endIndent: 100,
+            color: Color(primaryColor),
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Paramètres'),
             onTap: () {
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => SettingsPage(),
-              //   ),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_circle),
+            title: const Text('Compte'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AccountPage(),
+                ),
+              );
             },
           ),
           ListTile(

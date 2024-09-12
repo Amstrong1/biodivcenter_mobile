@@ -63,8 +63,8 @@ class _AnimalPageState extends State<AnimalPage> {
             } else {
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 8.0,
+                  horizontal: 0,
+                  vertical: 0,
                 ),
                 child: Column(
                   children: [

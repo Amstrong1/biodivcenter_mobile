@@ -11,6 +11,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool readOnly;
   final Function()? onTap;
   final int maxLines;
+  final bool enabled;
 
   const CustomTextFormField({
     super.key,
@@ -23,6 +24,7 @@ class CustomTextFormField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.maxLines = 1,
+    this.enabled = true,
   });
 
   @override
@@ -81,6 +83,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       readOnly: widget.readOnly,
       onTap: widget.onTap,
       maxLines: widget.maxLines,
+      enabled: widget.enabled,
       style: const TextStyle(
         fontFamily: 'Poppins',
         color: Colors.black,

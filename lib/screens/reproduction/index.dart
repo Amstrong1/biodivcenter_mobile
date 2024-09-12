@@ -66,8 +66,8 @@ class _ReproductionPageState extends State<ReproductionPage> {
             } else {
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 8.0,
+                  horizontal: 0.0,
+                  vertical: 0.0,
                 ),
                 child: Column(
                   children: [

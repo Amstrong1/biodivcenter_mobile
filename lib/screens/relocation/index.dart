@@ -66,8 +66,8 @@ class _RelocationPageState extends State<RelocationPage> {
             } else {
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10.0,
-                  vertical: 8.0,
+                  horizontal: 0,
+                  vertical: 0,
                 ),
                 child: Column(
                   children: [
