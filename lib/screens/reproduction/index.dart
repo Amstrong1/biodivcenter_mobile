@@ -6,6 +6,7 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Reproduction.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/reproduction/create.dart';
+import 'package:biodivcenter/screens/reproduction/show.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,7 +84,14 @@ class _ReproductionPageState extends State<ReproductionPage> {
                               title: reproduction.animalName,
                               subtitle: [reproduction.phase, reproduction.date],
                               onViewPressed: () {
-                                // Code pour afficher la reproduction
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ReproductionDetailsPage(
+                                      reproduction: reproduction,
+                                    ),
+                                  ),
+                                );
                               },
                               onDeletePressed: () {
                                 deleteResource(reproduction.id);

@@ -5,6 +5,7 @@ import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Alimentation.dart';
 import 'package:biodivcenter/screens/alimentation/create.dart';
+import 'package:biodivcenter/screens/alimentation/show.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -83,7 +84,14 @@ class _AlimentationPageState extends State<AlimentationPage> {
                               title: alimentation.food,
                               subtitle: [alimentation.specieName],
                               onViewPressed: () {
-                                // Code pour afficher l'alimentation
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AlimentationDetailsPage(
+                                      alimentation: alimentation,
+                                    ),
+                                  ),
+                                );
                               },
                               onDeletePressed: () {
                                 deleteResource(alimentation.id);

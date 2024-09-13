@@ -23,7 +23,6 @@ class CustomDropdown extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(
-          fontFamily: 'Poppins',
           color: Colors.black,
           fontSize: 12,
         ),
@@ -52,7 +51,6 @@ class CustomDropdown extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       style: const TextStyle(
-        fontFamily: 'Poppins',
         color: Colors.black,
         fontSize: 12,
       ),

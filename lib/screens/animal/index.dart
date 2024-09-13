@@ -4,6 +4,7 @@ import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Animal.dart';
 import 'package:biodivcenter/screens/animal/create.dart';
+import 'package:biodivcenter/screens/animal/show.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -79,7 +80,16 @@ class _AnimalPageState extends State<AnimalPage> {
                             child: CustomListTile(
                               title: animal.name,
                               subtitle: [animal.specieName],
-                              onViewPressed: () {},
+                              onViewPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => AnimalDetailsPage(
+                                      animal: animal,
+                                    ),
+                                  ),
+                                );
+                              },
                               onDeletePressed: () {
                                 deleteResource(animal.id);
                               },

@@ -6,6 +6,7 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/SanitaryState.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/sanitary_state/create.dart';
+import 'package:biodivcenter/screens/sanitary_state/show.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,7 +84,14 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
                               title: sanitaryState.animalName,
                               subtitle: [sanitaryState.label],
                               onViewPressed: () {
-                                // Code pour afficher les détails de l'état sanitaire
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => SanitaryStateDetailsPage(
+                                      sanitaryState: sanitaryState,
+                                    ),
+                                  ),
+                                );
                               },
                               onDeletePressed: () {
                                 deleteResource(sanitaryState.id);

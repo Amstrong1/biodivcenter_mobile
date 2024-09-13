@@ -6,6 +6,7 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Observation.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/observation/create.dart';
+import 'package:biodivcenter/screens/observation/show.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -89,7 +90,16 @@ class _ObservationPageState extends State<ObservationPage> {
                             child: CustomListTile(
                               title: observation.subject,
                               subtitle: [observation.date],
-                              onViewPressed: () {},
+                              onViewPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ObservationDetailsPage(
+                                      observation: observation,
+                                    ),
+                                  ),
+                                );
+                              },
                               onDeletePressed: () {
                                 deleteResource(observation.id);
                               },

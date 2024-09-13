@@ -156,7 +156,6 @@ class _AccountPageState extends State<AccountPage> {
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
-                        fontFamily: 'Poppins',
                       ),
                     ),
                   ],
@@ -189,7 +188,6 @@ class _AccountPageState extends State<AccountPage> {
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
-                        fontFamily: 'Poppins',
                       ),
                     ),
                   ],

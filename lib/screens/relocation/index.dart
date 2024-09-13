@@ -6,6 +6,7 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/Relocation.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/relocation/create.dart';
+import 'package:biodivcenter/screens/relocation/show.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,7 +84,14 @@ class _RelocationPageState extends State<RelocationPage> {
                               title: relocation.animalName,
                               subtitle: [relocation.date],
                               onViewPressed: () {
-                                // Code pour afficher la relocation
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => RelocationDetailsPage(
+                                      relocation: relocation,
+                                    ),
+                                  ),
+                                );
                               },
                               onDeletePressed: () {
                                 deleteResource(relocation.id);
