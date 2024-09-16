@@ -2,6 +2,7 @@ import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/models/_sanitary_state.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,14 +10,16 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddSanitaryState extends StatefulWidget {
-  const AddSanitaryState({super.key});
+class EditSanitaryState extends StatefulWidget {
+  const EditSanitaryState({super.key, required this.sanitaryState});
+
+  final SanitaryState sanitaryState;
 
   @override
-  AddSanitaryStatePage createState() => AddSanitaryStatePage();
+  EditSanitaryStatePage createState() => EditSanitaryStatePage();
 }
 
-class AddSanitaryStatePage extends State<AddSanitaryState> {
+class EditSanitaryStatePage extends State<EditSanitaryState> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _labelController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -50,6 +53,20 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
   void initState() {
     super.initState();
     _fetchAnimals();
+
+    _labelController.text = widget.sanitaryState.label;
+    _descriptionController.text = widget.sanitaryState.description;
+    _correctiveActionController.text = widget.sanitaryState.correctiveAction!;
+    _costController.text = widget.sanitaryState.cost.toString();
+    _temperatureController.text = widget.sanitaryState.temperature.toString();
+    _heightController.text = widget.sanitaryState.height != null
+        ? widget.sanitaryState.height.toString()
+        : "";
+    _weightController.text = widget.sanitaryState.weight != null
+        ? widget.sanitaryState.weight.toString()
+        : "";
+
+    _selectedAnimal = widget.sanitaryState.id.toString();
   }
 
   /// Function to send the animal creation form to the API and handle
@@ -63,17 +80,14 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('$apiBaseUrl/api/api-sanitary-state'),
+        Uri.parse(
+            '$apiBaseUrl/api/api-sanitary-state/${widget.sanitaryState.id}'),
       );
       // request.headers['Authorization'] =
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 
       request.fields['user_id'] =
           (await SharedPreferences.getInstance()).getInt('id').toString();
-      request.fields['ong_id'] =
-          (await SharedPreferences.getInstance()).getInt('ong_id').toString();
-      request.fields['site_id'] =
-          (await SharedPreferences.getInstance()).getInt('site_id').toString();
       request.fields['animal_id'] = _selectedAnimal!;
       request.fields['label'] = _labelController.text;
       request.fields['description'] = _descriptionController.text;
@@ -82,10 +96,6 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
       request.fields['temperature'] = _temperatureController.text;
       request.fields['height'] = _heightController.text;
       request.fields['weight'] = _weightController.text;
-      request.fields['slug'] = _labelController.text
-          .toLowerCase()
-          .replaceAll(RegExp(r'\s'), '-')
-          .replaceAll(RegExp(r'[^\w-]'), '');
 
       final response = await request.send();
 

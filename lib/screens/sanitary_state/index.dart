@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/SanitaryState.dart';
+import 'package:biodivcenter/models/_sanitary_state.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/sanitary_state/create.dart';
+import 'package:biodivcenter/screens/sanitary_state/edit.dart';
 import 'package:biodivcenter/screens/sanitary_state/show.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -88,6 +89,16 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => SanitaryStateDetailsPage(
+                                      sanitaryState: sanitaryState,
+                                    ),
+                                  ),
+                                );
+                              },
+                              onEditPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditSanitaryState(
                                       sanitaryState: sanitaryState,
                                     ),
                                   ),

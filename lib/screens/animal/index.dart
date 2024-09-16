@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Animal.dart';
+import 'package:biodivcenter/models/_animal.dart';
 import 'package:biodivcenter/screens/animal/create.dart';
+import 'package:biodivcenter/screens/animal/edit.dart';
 import 'package:biodivcenter/screens/animal/show.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
@@ -85,6 +86,16 @@ class _AnimalPageState extends State<AnimalPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => AnimalDetailsPage(
+                                      animal: animal,
+                                    ),
+                                  ),
+                                );
+                              },
+                              onEditPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditAnimalPage(
                                       animal: animal,
                                     ),
                                   ),

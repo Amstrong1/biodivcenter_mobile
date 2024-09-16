@@ -3,7 +3,7 @@ import 'package:biodivcenter/components/date_field.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Animal.dart';
+import 'package:biodivcenter/models/_animal.dart';
 import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,8 +11,6 @@ import 'dart:convert';
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 class EditAnimalPage extends StatefulWidget {
   const EditAnimalPage({super.key, required this.animal});
@@ -30,21 +28,19 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _originController = TextEditingController();
+
   String? _selectedDate;
-
-  bool _isLoading = false;
-
   String? _selectedSpecie;
-  List<dynamic> _speciesList = [];
-
   String? _selectedParent;
-  List<dynamic> _parentList = [];
-
   String? _selectedSex;
-  final List<String> _sexOptions = ['Mâle', 'Femelle'];
 
+  List<dynamic> _speciesList = [];
+  List<dynamic> _parentList = [];
   File? _selectedImage;
+
   final _imagePicker = ImagePicker();
+  bool _isLoading = false;
+  final List<String> _sexOptions = ['Mâle', 'Femelle'];
 
   // Fonction pour récupérer la liste des espèces depuis l'API
   Future<void> _fetchSpecies() async {
@@ -89,6 +85,8 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
     _originController.text = widget.animal.origin;
     _selectedSex = widget.animal.sex;
     _selectedDate = widget.animal.birthdate;
+    _selectedSpecie = widget.animal.specieId.toString();
+    _selectedParent = widget.animal.parent;
   }
 
   /// Function to send the animal creation form to the API and handle
@@ -100,58 +98,50 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
         _isLoading = true;
       });
 
-      final request = http.MultipartRequest(
-        'PUT',
-        Uri.parse('$apiBaseUrl/api/individu/${widget.animal.id}'),
-      );
-      // request.headers['Authorization'] =
-      //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
-
-      request.fields['ong_id'] =
-          (await SharedPreferences.getInstance()).getInt('ong_id').toString();
-      request.fields['site_id'] =
-          (await SharedPreferences.getInstance()).getInt('site_id').toString();
-      request.fields['name'] = _nameController.text;
-      request.fields['specie_id'] = _selectedSpecie!;
-      request.fields['weight'] = _weightController.text;
-      request.fields['height'] = _heightController.text;
-      request.fields['sex'] = _selectedSex!;
-      request.fields['birthdate'] = _selectedDate!;
-      request.fields['description'] = _descriptionController.text;
-      request.fields['origin'] = _originController.text;
-      request.fields['slug'] = _nameController.text
-          .toLowerCase()
-          .replaceAll(RegExp(r'\s'), '-')
-          .replaceAll(RegExp(r'[^\w-]'), '');
-      // request.fields['parent_id'] = _selectedParent!;
-
-      if (_selectedImage != null) {
-        request.files.add(await http.MultipartFile.fromPath(
-          'photo',
-          _selectedImage!.path,
-        ));
-      }
-
-      final response = await request.send();
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Animal enregistré avec succès !'),
-          ),
+      try {
+        final request = http.MultipartRequest(
+          'POST',
+          Uri.parse('$apiBaseUrl/api/individu/${widget.animal.id}'),
         );
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const AnimalPage()),
-        );
-      } else {
+
+        request.fields.addAll({
+          'name': _nameController.text,
+          'specie_id': _selectedSpecie!,
+          'weight': _weightController.text,
+          'height': _heightController.text,
+          'sex': _selectedSex!,
+          'birthdate': _selectedDate!,
+          'description': _descriptionController.text,
+          'origin': _originController.text,
+        });
+
+        if (_selectedImage != null) {
+          request.files.add(
+            await http.MultipartFile.fromPath('photo', _selectedImage!.path),
+          );
+        }
+
+        final response = await request.send();
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Animal enregistré avec succès !')),
+          );
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const AnimalPage()),
+          );
+        } else {
+          throw Exception('Erreur lors de l\'enregistrement');
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erreur lors de l\'enregistrement'),
-          ),
+          SnackBar(content: Text(e.toString())),
         );
       }
     }

@@ -1,5 +1,5 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/SanitaryState.dart';
+import 'package:biodivcenter/models/_sanitary_state.dart';
 // import 'package:biodivcenter/screens/sanitaryState/edit.dart';
 import 'package:flutter/material.dart';
 
@@ -31,8 +31,7 @@ class SanitaryStateDetailsPage extends StatelessWidget {
                   infoRow("Date d'enregistrement", sanitaryState.description),
                   infoRow("Date d'enregistrement",
                       sanitaryState.correctiveAction ?? 'Non défini'),
-                  infoRow("Date d'enregistrement",
-                      sanitaryState.cost ?? 'Non défini'),
+                  infoRow("Date d'enregistrement", sanitaryState.cost),
                   infoRow("Date d'enregistrement",
                       sanitaryState.temperature.toString()),
                   infoRow(

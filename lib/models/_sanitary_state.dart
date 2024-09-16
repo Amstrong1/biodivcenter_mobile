@@ -4,7 +4,7 @@ class SanitaryState {
   final String animalName;
   final String description;
   final String? correctiveAction;
-  final String? cost;
+  final String cost;
   final int? temperature;
   final int? height;
   final int? weight;
@@ -16,7 +16,7 @@ class SanitaryState {
     required this.animalName,
     required this.description,
     this.correctiveAction,
-    this.cost,
+    required this.cost,
     this.temperature,
     this.height,
     this.weight,

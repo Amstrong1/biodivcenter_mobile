@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Relocation.dart';
+import 'package:biodivcenter/models/_relocation.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/relocation/create.dart';
 import 'package:biodivcenter/screens/relocation/show.dart';
@@ -93,6 +93,7 @@ class _RelocationPageState extends State<RelocationPage> {
                                   ),
                                 );
                               },
+                              onEditPressed: () {},
                               onDeletePressed: () {
                                 deleteResource(relocation.id);
                               },

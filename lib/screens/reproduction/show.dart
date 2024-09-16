@@ -1,5 +1,5 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/Reproduction.dart';
+import 'package:biodivcenter/models/_reproduction.dart';
 // import 'package:biodivcenter/screens/reproduction/edit.dart';
 import 'package:flutter/material.dart';
 

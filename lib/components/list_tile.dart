@@ -6,6 +6,7 @@ class CustomListTile extends StatelessWidget {
   final List<String> subtitle;
   final String? photo;
   final VoidCallback onViewPressed;
+  final VoidCallback onEditPressed;
   final VoidCallback onDeletePressed;
 
   const CustomListTile({
@@ -14,6 +15,7 @@ class CustomListTile extends StatelessWidget {
     required this.subtitle,
     this.photo,
     required this.onViewPressed,
+    required this.onEditPressed,
     required this.onDeletePressed,
   });
 
@@ -76,25 +78,60 @@ class CustomListTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8.0),
-          SizedBox(
-            width: 50,
-            child: TextButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.red,
-                backgroundColor: Colors.red[100],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-              ),
-              child: const Text(
-                "Sup",
-                style: TextStyle(fontSize: 11),
-              ),
-              onPressed: onDeletePressed,
-            ),
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {
+              _showModal(context);
+            },
           ),
         ],
       ),
+      onTap: onViewPressed,
+      dense: true,
+      visualDensity: VisualDensity.compact,
+    );
+  }
+
+  void _showModal(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          height: 150,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextButton(
+                onPressed: onEditPressed,
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.edit, color: Colors.amber),
+                    SizedBox(width: 20),
+                    Text(
+                      'Modifier',
+                      style: TextStyle(color: Colors.amber, fontSize: 18.0),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: onDeletePressed,
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.delete, color: Colors.red),
+                    SizedBox(width: 20),
+                    Text(
+                      'Supprimer',
+                      style: TextStyle(color: Colors.red, fontSize: 18.0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

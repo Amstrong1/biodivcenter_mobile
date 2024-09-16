@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Alimentation.dart';
+import 'package:biodivcenter/models/_alimentation.dart';
 import 'package:biodivcenter/screens/alimentation/create.dart';
+import 'package:biodivcenter/screens/alimentation/edit.dart';
 import 'package:biodivcenter/screens/alimentation/show.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,16 @@ class _AlimentationPageState extends State<AlimentationPage> {
                               },
                               onDeletePressed: () {
                                 deleteResource(alimentation.id);
+                              },
+                              onEditPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditAlimentationPage(
+                                      alimentation: alimentation,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           );

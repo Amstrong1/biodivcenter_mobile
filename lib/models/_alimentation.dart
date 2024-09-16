@@ -1,6 +1,7 @@
 class Alimentation {
   final int id;
   final String food;
+  final int specieId;
   final String specieName;
   final String ageRange;
   final String frequency;
@@ -11,6 +12,7 @@ class Alimentation {
     required this.id,
     required this.food,
     required this.specieName,
+    required this.specieId,
     required this.ageRange,
     required this.frequency,
     required this.quantity,
@@ -22,6 +24,7 @@ class Alimentation {
     return Alimentation(
       id: json['id'],
       food: json['food'],
+      specieId: json['specie_id'],
       specieName: json['specie_name'],
       ageRange: json['age_range'],
       frequency: json['frequency'],

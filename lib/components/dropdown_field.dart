@@ -18,6 +18,26 @@ class CustomDropdown extends StatelessWidget {
   });
 
   @override
+
+  /// Retourne un DropdownButtonFormField qui permet à l'utilisateur de choisir
+  /// un item dans une liste. La liste est fournie par le paramètre itemList.
+  ///
+  /// Si la liste est vide, le champ est gris  et ne peut pas être modifié.
+  /// Si la liste n'est pas vide et que le paramètre selectedItem n'est pas
+  /// fourni, le premier item de la liste est selectionné par defaut.
+  ///
+  /// Le texte de chaque item est détermin  de la façon suivante :
+  /// - Si l'item est un String, le texte est ce String.
+  /// - Si l'item est un Map, le texte est la valeur de la clé  'french_name'
+  ///   si elle existe, sinon la valeur de la clé  'name' si elle existe,
+  ///   sinon la représentation en String de l'item.
+  ///
+  /// Le champ peut  tre validé  grace au paramètre validator qui est appelé
+  /// lorsqu'un item est sélectionn . Si le paramètre validator n'est pas
+  /// fourni, la validation est inexistante.
+  ///
+  /// Lorsqu'un item est sélectionn , le paramètre onChanged est appelé avec
+  /// l'item sélectionné comme argument.
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
@@ -34,20 +54,22 @@ class CustomDropdown extends StatelessWidget {
         fillColor: Color(accentColor),
       ),
       value: selectedItem,
-      items: itemList.map<DropdownMenuItem<String>>((item) {
-        return DropdownMenuItem<String>(
-          value: item is String ? item : item['id'].toString(),
-          child: Text(
-            item is String
-                ? item
-                : item.containsKey('french_name')
-                    ? item['french_name']
-                    : item.containsKey('name')
-                        ? item['name']
-                        : item.toString(),
-          ),
-        );
-      }).toList(),
+      items: itemList.isNotEmpty
+          ? itemList.map<DropdownMenuItem<String>>((item) {
+              return DropdownMenuItem<String>(
+                value: item is String ? item : item['id'].toString(),
+                child: Text(
+                  item is String
+                      ? item
+                      : item.containsKey('french_name')
+                          ? item['french_name']
+                          : item.containsKey('name')
+                              ? item['name']
+                              : item.toString(),
+                ),
+              );
+            }).toList()
+          : [], // Assure que les items ne sont pas créés si la liste est vide
       onChanged: onChanged,
       validator: validator,
       style: const TextStyle(

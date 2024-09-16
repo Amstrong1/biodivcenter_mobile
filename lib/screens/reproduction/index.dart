@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Reproduction.dart';
+import 'package:biodivcenter/models/_reproduction.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/reproduction/create.dart';
 import 'package:biodivcenter/screens/reproduction/show.dart';
@@ -93,6 +93,7 @@ class _ReproductionPageState extends State<ReproductionPage> {
                                   ),
                                 );
                               },
+                              onEditPressed: () {},
                               onDeletePressed: () {
                                 deleteResource(reproduction.id);
                               },

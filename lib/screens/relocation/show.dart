@@ -1,5 +1,5 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/Relocation.dart';
+import 'package:biodivcenter/models/_relocation.dart';
 // import 'package:biodivcenter/screens/relocation/edit.dart';
 import 'package:flutter/material.dart';
 

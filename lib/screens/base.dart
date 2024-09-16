@@ -93,7 +93,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.pets),
+            leading: const Icon(Icons.pets, color: Colors.green),
             title: const Text('Individus'),
             onTap: () {
               Navigator.of(context).pushReplacement(
@@ -104,7 +104,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.health_and_safety),
+            leading: const Icon(Icons.health_and_safety, color: Colors.green),
             title: const Text('État Sanitaire'),
             onTap: () {
               Navigator.of(context).push(
@@ -115,7 +115,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.favorite),
+            leading: const Icon(Icons.favorite, color: Colors.green),
             title: const Text('Reproduction'),
             onTap: () {
               Navigator.of(context).push(
@@ -126,7 +126,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.local_dining),
+            leading: const Icon(Icons.local_dining, color: Colors.green),
             title: const Text('Alimentation'),
             onTap: () {
               Navigator.of(context).push(
@@ -137,7 +137,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.move_down),
+            leading: const Icon(Icons.move_down, color: Colors.green),
             title: const Text('Transfert'),
             onTap: () {
               Navigator.of(context).push(
@@ -148,7 +148,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.search),
+            leading: const Icon(Icons.search, color: Colors.green),
             title: const Text('Observation'),
             onTap: () {
               Navigator.of(context).push(
@@ -165,7 +165,7 @@ class MainDrawer extends StatelessWidget {
             color: Color(primaryColor),
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
+            leading: const Icon(Icons.settings, color: Colors.green),
             title: const Text('Paramètres'),
             onTap: () {
               Navigator.of(context).push(
@@ -176,7 +176,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.account_circle),
+            leading: const Icon(Icons.account_circle, color: Colors.green),
             title: const Text('Compte'),
             onTap: () {
               Navigator.of(context).push(
@@ -186,8 +186,9 @@ class MainDrawer extends StatelessWidget {
               );
             },
           ),
+          const SizedBox(height: 20),
           ListTile(
-            leading: const Icon(Icons.exit_to_app),
+            leading: const Icon(Icons.exit_to_app, color: Colors.green),
             title: const Text('Déconnexion'),
             onTap: () async {
               await context.read<AuthProvider>().logout();

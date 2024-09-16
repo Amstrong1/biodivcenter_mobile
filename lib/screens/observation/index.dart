@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Observation.dart';
+import 'package:biodivcenter/models/_observation.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/observation/create.dart';
+import 'package:biodivcenter/screens/observation/edit.dart';
 import 'package:biodivcenter/screens/observation/show.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -95,6 +96,16 @@ class _ObservationPageState extends State<ObservationPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => ObservationDetailsPage(
+                                      observation: observation,
+                                    ),
+                                  ),
+                                );
+                              },
+                              onEditPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditObservationPage(
                                       observation: observation,
                                     ),
                                   ),

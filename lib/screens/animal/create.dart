@@ -93,6 +93,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         'POST',
         Uri.parse('$apiBaseUrl/api/individu'),
       );
+      
       // request.headers['Authorization'] =
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 

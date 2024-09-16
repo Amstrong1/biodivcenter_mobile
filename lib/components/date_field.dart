@@ -32,23 +32,29 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dateController.text = "${picked.toLocal()}"
-            .split(' ')[0]; // Formater la date en 'YYYY-MM-DD'
-        widget.onDateSelected(_dateController
-            .text); // Appelle la fonction de rappel pour renvoyer la date sélectionnée
+        _dateController.text = "${picked.toLocal()}".split(' ')[0];
+        widget.onDateSelected(_dateController.text);
       });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.selectedDate != null) {
+      _selectedDate = DateTime.parse(widget.selectedDate!);
+      _dateController.text = "${_selectedDate!.toLocal()}".split(' ')[0];
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
-      controller: _dateController..text = widget.selectedDate ?? '',
+      controller: _dateController,
       labelText: widget.labelText,
-      readOnly: true, // Rendre le champ en lecture seule
+      readOnly: true,
       onTap: () {
-        _selectDate(
-            context); // Ouvrir le sélecteur de date lors du tap sur le champ
+        _selectDate(context);
       },
       validator: (value) {
         if (value == null || value.isEmpty) {

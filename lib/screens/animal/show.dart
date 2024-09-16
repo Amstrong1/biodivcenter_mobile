@@ -1,6 +1,6 @@
 import 'package:biodivcenter/components/info_card.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/Animal.dart';
+import 'package:biodivcenter/models/_animal.dart';
 import 'package:biodivcenter/screens/animal/edit.dart';
 import 'package:flutter/material.dart';
 
@@ -90,7 +90,7 @@ class AnimalDetailsPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         infoRow('Provenance', animal.origin),
-                        infoRow('Parent', animal.parent),
+                        infoRow('Parent', animal.parent ?? 'Non défini'),
                       ],
                     ),
                   ),
@@ -163,4 +163,4 @@ class AnimalDetailsPage extends StatelessWidget {
   }
 
   // Fonction pour créer une carte d'informations
- }
+}

@@ -10,7 +10,8 @@ class Animal {
   final String birthdate;
   final String createdAt;
   final String origin;
-  final String parent;
+  final int? parentId;
+  final String? parent;
   final String state;
   final String description;
   final String sanitaryStateLabel;
@@ -28,7 +29,8 @@ class Animal {
     required this.birthdate,
     required this.createdAt,
     required this.origin,
-    required this.parent,
+    this.parentId,
+    this.parent,
     required this.state,
     required this.description,
     required this.weight,
@@ -45,13 +47,14 @@ class Animal {
       id: json['id'],
       name: json['name'],
       photo: json['photo'],
-      specieId: json['id'],
+      specieId: json['specie_id'],
       specieName: json['specie_name'],
       sex: json['sex'],
       birthdate: json['birthdate'],
       createdAt: json['formated_created_at'],
       origin: json['origin'],
-      parent: json['parent'],
+      parentId: json['animal_id'],
+      parent: json['parent_name'],
       state: json['state'],
       description: json['description'],
       weight: json['weight'],
