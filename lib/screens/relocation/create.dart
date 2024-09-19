@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/date_field.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
@@ -125,7 +124,10 @@ class _AddRelocationPageState extends State<AddRelocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter un transfert'),
+        title: const Text(
+          'Ajouter un transfert',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
           child: Padding(
@@ -201,7 +203,7 @@ class _AddRelocationPageState extends State<AddRelocationPage> {
               ),
               const SizedBox(height: 40),
               _isLoading
-                  ? const CustomCircularProgessIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(primaryColor),

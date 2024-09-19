@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/date_field.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
@@ -113,7 +112,10 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter une reproduction'),
+        title: const Text(
+          'Ajouter une reproduction',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -187,7 +189,7 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
                 ),
                 const SizedBox(height: 40),
                 _isLoading
-                    ? const CustomCircularProgessIndicator()
+                    ? const CircularProgressIndicator()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(primaryColor),

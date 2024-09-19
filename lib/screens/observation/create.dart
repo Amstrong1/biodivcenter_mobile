@@ -76,7 +76,10 @@ class _AddObservationPageState extends State<AddObservationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter une observation'),
+        title: const Text(
+          'Ajouter une observation',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
           child: Padding(

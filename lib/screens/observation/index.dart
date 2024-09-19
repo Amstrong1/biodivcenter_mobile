@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/list_tile.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/_observation.dart';
@@ -59,7 +58,7 @@ class _ObservationPageState extends State<ObservationPage> {
           future: _observationList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CustomCircularProgessIndicator();
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text("Erreur : ${snapshot.error}");
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

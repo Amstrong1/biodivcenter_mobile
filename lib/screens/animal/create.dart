@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/date_field.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
@@ -55,8 +54,8 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
 
   // Fonction pour récupérer la liste des parents d'une espèce sélectionnée
   Future<void> _fetchParents(int specieId) async {
-    final response = await http
-        .get(Uri.parse('$apiBaseUrl/api/parents/$specieId'));
+    final response =
+        await http.get(Uri.parse('$apiBaseUrl/api/parents/$specieId'));
     if (response.statusCode == 200) {
       setState(() {
         _parentList = jsonDecode(response.body);
@@ -93,7 +92,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         'POST',
         Uri.parse('$apiBaseUrl/api/individu'),
       );
-      
+
       // request.headers['Authorization'] =
       //     'Bearer ${(await SharedPreferences.getInstance()).getString('token')}';
 
@@ -151,7 +150,10 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter un individu'),
+        title: const Text(
+          'Ajouter un individu',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -297,7 +299,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
                 ),
                 const SizedBox(height: 40),
                 _isLoading
-                    ? const CustomCircularProgessIndicator()
+                    ? const CircularProgressIndicator()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(primaryColor),

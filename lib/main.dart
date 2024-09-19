@@ -18,7 +18,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           fontFamily: 'Poppins',
-          brightness: Brightness.light,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xff1e9a2c),
+            brightness: Brightness.light,
+          ),
         ),
         // debugShowCheckedModeBanner: false,
         home: const SplashScreen(),

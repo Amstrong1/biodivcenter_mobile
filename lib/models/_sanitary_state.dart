@@ -8,6 +8,8 @@ class SanitaryState {
   final int? temperature;
   final int? height;
   final int? weight;
+  final String date;
+  
   
 
   SanitaryState({
@@ -20,6 +22,7 @@ class SanitaryState {
     this.temperature,
     this.height,
     this.weight,
+    required this.date,
   });
 
   // Convertit un JSON en objet SanitaryState
@@ -34,6 +37,7 @@ class SanitaryState {
       temperature: json['temperature'],
       height: json['height'],
       weight: json['weight'],
+      date: json['formated_date'],
     );
   }
 }

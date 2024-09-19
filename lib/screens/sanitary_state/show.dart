@@ -1,6 +1,6 @@
 import 'package:biodivcenter/components/info_card.dart';
 import 'package:biodivcenter/models/_sanitary_state.dart';
-// import 'package:biodivcenter/screens/sanitaryState/edit.dart';
+import 'package:biodivcenter/screens/sanitary_state/edit.dart';
 import 'package:flutter/material.dart';
 
 class SanitaryStateDetailsPage extends StatelessWidget {
@@ -22,22 +22,36 @@ class SanitaryStateDetailsPage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             infoCard(
-              title: "Informations d'identification :",
+              title: "Détails :",
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  infoRow('Sexe', sanitaryState.label),
-                  infoRow('Date de naissance', sanitaryState.animalName),
-                  infoRow("Date d'enregistrement", sanitaryState.description),
-                  infoRow("Date d'enregistrement",
+                  infoRow('Etat Sanitaire', sanitaryState.label),
+                  const SizedBox(height: 8),
+                  infoRow('Individu', sanitaryState.animalName),
+                  const SizedBox(height: 8),
+                  infoRow('Date', sanitaryState.date),
+                  const SizedBox(height: 8),
+                  infoRow("Description", sanitaryState.description),
+                  const SizedBox(height: 8),
+                  infoRow("Action correctif",
                       sanitaryState.correctiveAction ?? 'Non défini'),
-                  infoRow("Date d'enregistrement", sanitaryState.cost),
-                  infoRow("Date d'enregistrement",
-                      sanitaryState.temperature.toString()),
+                  const SizedBox(height: 8),
+                  infoRow("Coût", sanitaryState.cost),
+                  const SizedBox(height: 8),
+                  infoRow("Température", sanitaryState.temperature.toString()),
+                  const SizedBox(height: 8),
                   infoRow(
-                      "Date d'enregistrement", sanitaryState.height.toString()),
+                      "Taille",
+                      sanitaryState.height != null
+                          ? sanitaryState.height.toString()
+                          : 'Non défini'),
+                  const SizedBox(height: 8),
                   infoRow(
-                      "Date d'enregistrement", sanitaryState.weight.toString()),
+                      "Hauteur",
+                      sanitaryState.weight != null
+                          ? sanitaryState.weight.toString()
+                          : 'Non défini'),
                 ],
               ),
             ),
@@ -46,13 +60,13 @@ class SanitaryStateDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         EditSanitaryStatePage(sanitaryState: sanitaryState),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EditSanitaryState(sanitaryState: sanitaryState),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,

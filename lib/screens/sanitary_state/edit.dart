@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
@@ -129,7 +128,10 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter un individu'),
+        title: const Text(
+          'Editer l\'etat sanitaire',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
           child: Padding(
@@ -210,7 +212,7 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
               ),
               const SizedBox(height: 40),
               _isLoading
-                  ? const CustomCircularProgessIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(primaryColor),

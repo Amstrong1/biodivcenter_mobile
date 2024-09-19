@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/date_field.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
@@ -58,7 +57,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
     _fetchAnimals();
 
     _litterSizeController.text = widget.reproduction.litterSize.toString();
-    _observationController.text = widget.reproduction.observation!;
+    _observationController.text = widget.reproduction.observation ?? '';
     _selectedDate = widget.reproduction.date;
     _selectedPhase = widget.reproduction.phase;
   }
@@ -114,7 +113,10 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ajouter une reproduction'),
+        title: const Text(
+          'Ajouter une reproduction',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -174,6 +176,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
                 const SizedBox(height: 20),
                 DatePickerFormField(
                   labelText: 'Date de reproduction',
+                  selectedDate: _selectedDate,
                   onDateSelected: (selectedDate) {
                     setState(() {
                       _selectedDate = selectedDate;
@@ -188,7 +191,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
                 ),
                 const SizedBox(height: 40),
                 _isLoading
-                    ? const CustomCircularProgessIndicator()
+                    ? const CircularProgressIndicator()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(primaryColor),

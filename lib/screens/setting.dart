@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/helpers/user_service.dart';
 import 'package:biodivcenter/models/_user.dart';
@@ -30,7 +29,7 @@ class _SettingPageState extends State<SettingPage> {
         future: _user,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CustomCircularProgessIndicator();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text("Erreur : ${snapshot.error}");
           } else if (!snapshot.hasData) {

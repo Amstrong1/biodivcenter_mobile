@@ -1,6 +1,6 @@
 import 'package:biodivcenter/components/info_card.dart';
 import 'package:biodivcenter/models/_alimentation.dart';
-// import 'package:biodivcenter/screens/alimentation/edit.dart';
+import 'package:biodivcenter/screens/alimentation/edit.dart';
 import 'package:flutter/material.dart';
 
 class AlimentationDetailsPage extends StatelessWidget {
@@ -26,6 +26,7 @@ class AlimentationDetailsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   infoRow('Espece', alimentation.specieName),
+                  const SizedBox(height: 8),
                   infoRow('Age', alimentation.ageRange),
                 ],
               ),
@@ -37,8 +38,11 @@ class AlimentationDetailsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   infoRow('Aliment', alimentation.food),
+                  const SizedBox(height: 8),
                   infoRow('Fréquence', alimentation.frequency),
+                  const SizedBox(height: 8),
                   infoRow('Quantité', '${alimentation.quantity} kg'),
+                  const SizedBox(height: 8),
                   infoRow('Coût', alimentation.cost),
                 ],
               ),
@@ -48,13 +52,13 @@ class AlimentationDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         EditAlimentationPage(alimentation: alimentation),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EditAlimentationPage(alimentation: alimentation),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,

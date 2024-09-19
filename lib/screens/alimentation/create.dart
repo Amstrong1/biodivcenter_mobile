@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
@@ -201,7 +200,7 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
                 ),
                 const SizedBox(height: 40),
                 _isLoading
-                    ? const CustomCircularProgessIndicator()
+                    ? const CircularProgressIndicator()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(primaryColor),

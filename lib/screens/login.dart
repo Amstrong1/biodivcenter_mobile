@@ -1,4 +1,3 @@
-import 'package:biodivcenter/components/circular_progess_indicator.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/auth_provider.dart';
 import 'package:biodivcenter/helpers/global.dart';
@@ -80,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 const SizedBox(height: 20),
                 _isSubmitting
-                    ? const CustomCircularProgessIndicator() // Affiche l'indicateur de chargement si en cours de soumission
+                    ? const CircularProgressIndicator() // Affiche l'indicateur de chargement si en cours de soumission
                     : ElevatedButton(
                         onPressed: () async {
                           setState(() {
