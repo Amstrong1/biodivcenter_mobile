@@ -60,24 +60,24 @@ class CustomListTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: 50,
-            child: TextButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Color(primaryColor),
-                backgroundColor: Color(secondaryColor),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-              ),
-              onPressed: onViewPressed,
-              child: const Text(
-                "Voir",
-                style: TextStyle(fontSize: 11),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8.0),
+          // SizedBox(
+          //   width: 50,
+          //   child: TextButton(
+          //     style: ElevatedButton.styleFrom(
+          //       foregroundColor: Color(primaryColor),
+          //       backgroundColor: Color(secondaryColor),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(30.0),
+          //       ),
+          //     ),
+          //     onPressed: onViewPressed,
+          //     child: const Text(
+          //       "Voir",
+          //       style: TextStyle(fontSize: 11),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(width: 8.0),
           IconButton(
             icon: const Icon(Icons.more_vert),
             onPressed: () {

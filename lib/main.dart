@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Poppins',
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xff1e9a2c),
-            brightness: Brightness.light,
           ),
         ),
         // debugShowCheckedModeBanner: false,

@@ -27,214 +27,230 @@ class _AccountPageState extends State<AccountPage> {
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
 
+  bool _isEditing = false;
   // bool _isLoading = false;
   @override
   void initState() {
     super.initState();
-    _user = _userService.fetchUser(); // Appeler la méthode fetchUser
+    _user = _userService.fetchUser();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
-      body: FutureBuilder<User>(
-        future: _user,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text("Erreur : ${snapshot.error}");
-          } else if (!snapshot.hasData) {
-            return const Column(
-              children: [
-                Text(
-                  "Une erreur est survenue lors de la récupération des informations de l'utilisateur.",
-                ),
-              ],
-            );
-          } else {
-            final user = snapshot.data!; // Accéder à l'utilisateur récupéré
-            return SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Compte',
+      body: Center(
+        child: FutureBuilder<User>(
+          future: _user,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text("Erreur : ${snapshot.error}");
+            } else if (!snapshot.hasData) {
+              return const Column(
+                children: [
+                  Text(
+                    "Une erreur est survenue lors de la récupération des informations de l'utilisateur.",
+                  ),
+                ],
+              );
+            } else {
+              final user = snapshot.data!; // Accéder à l'utilisateur récupéré
+              return SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Compte',
+                                style: TextStyle(
+                                  fontFamily: 'Merriweather',
+                                  color: Color(primaryColor),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _isEditing = !_isEditing;
+                              });
+                            },
+                            icon: Icon(
+                              _isEditing ? Icons.check : Icons.edit_outlined,
+                              color: _isEditing
+                                  ? Color(primaryColor)
+                                  : Colors.amber,
+                            ),
+                            label: Text(
+                              _isEditing ? "Sauvegarder" : "Editer",
                               style: TextStyle(
-                                fontFamily: 'Merriweather',
-                                color: Color(primaryColor),
+                                color: _isEditing
+                                    ? Color(primaryColor)
+                                    : Colors.amber,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20.0,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _isEditing
+                                  ? Color(secondaryColor)
+                                  : Colors.amber[100],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Color(accentColor),
+                        child: user.picture != null
+                            ? Image.network(
+                                '$apiBaseUrl/storage/${user.picture}',
+                                width: 100,
+                                height: 100,
+                              )
+                            : Text(
+                                user.name[0], // Utilisation du snapshot
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(primaryColor),
+                                ),
+                              ),
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _nameController..text = user.name,
+                        labelText: 'Nom',
+                        prefixIcon: Icons.person_outlined,
+                        enabled: _isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer votre nom';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _organizationController..text = user.ong,
+                        labelText: 'Organisation',
+                        prefixIcon: Icons.business_center_outlined,
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _countryController..text = user.country,
+                        labelText: 'Pays',
+                        prefixIcon: Icons.location_on_outlined,
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _emailController..text = user.email,
+                        labelText: 'Email',
+                        prefixIcon: Icons.email_outlined,
+                        enabled: _isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer votre email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      CustomTextFormField(
+                        controller: _contactController..text = user.contact,
+                        labelText: 'Contact',
+                        prefixIcon: Icons.phone_outlined,
+                        enabled: _isEditing,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer votre contact';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 40),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: const Size(double.infinity, 50),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.lock_outline_rounded,
+                                color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(
+                              'Modifier le mot de passe',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
                               ),
                             ),
                           ],
                         ),
-                        TextButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.edit_outlined,
-                              color: Colors.amber),
-                          label: const Text(
-                            "Editer",
-                            style: TextStyle(
-                              color: Colors.amber,
-                              fontWeight: FontWeight.bold,
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await context.read<AuthProvider>().logout();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
                             ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber[100],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
+                          minimumSize: const Size(double.infinity, 50),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Color(accentColor),
-                      child: user.picture != null
-                          ? Image.network(
-                              '$apiBaseUrl/storage/${user.picture}',
-                              width: 100,
-                              height: 100,
-                            )
-                          : Text(
-                              user.name[0], // Utilisation du snapshot
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.logout, color: Colors.white),
+                            SizedBox(width: 10),
+                            Text(
+                              'Se deconnecter',
                               style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Color(primaryColor),
+                                fontSize: 18,
+                                color: Colors.white,
                               ),
                             ),
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: _nameController..text = user.name,
-                      labelText: 'Nom',
-                      prefixIcon: Icons.person_outlined,
-                      enabled: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre nom';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: _organizationController..text = user.ong,
-                      labelText: 'Organisation',
-                      prefixIcon: Icons.business_center_outlined,
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: _countryController..text = user.country,
-                      labelText: 'Pays',
-                      prefixIcon: Icons.location_on_outlined,
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: _emailController..text = user.email,
-                      labelText: 'Email',
-                      prefixIcon: Icons.email_outlined,
-                      enabled: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre email';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: _contactController..text = user.contact,
-                      labelText: 'Contact',
-                      prefixIcon: Icons.phone_outlined,
-                      enabled: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer votre contact';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          ],
                         ),
-                        minimumSize: const Size(double.infinity, 50),
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.lock_outline_rounded, color: Colors.white),
-                          SizedBox(width: 10),
-                          Text(
-                            'Modifier le mot de passe',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await context.read<AuthProvider>().logout();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.logout, color: Colors.white),
-                          SizedBox(width: 10),
-                          Text(
-                            'Se deconnecter',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
-        },
+              );
+            }
+          },
+        ),
       ),
     );
   }

@@ -26,32 +26,26 @@ class BaseScaffold extends StatelessWidget {
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
-            return Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.menu,
-                  color: Colors.green,
-                  size: 50,
-                ),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
+            return IconButton(
+              icon: Icon(
+                Icons.menu,
+                color: Color(primaryColor),
+                size: 50,
               ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
             );
           },
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: IconButton(
-              icon: const Icon(
-                Icons.person,
-                color: Colors.black,
-                size: 50,
-              ),
-              onPressed: () {},
+          IconButton(
+            icon: const Icon(
+              Icons.person,
+              color: Colors.black,
+              size: 50,
             ),
+            onPressed: () {},
           ),
         ],
       ),
@@ -93,7 +87,7 @@ class MainDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.pets, color: Colors.green),
+            leading: Icon(Icons.pets, color: Color(primaryColor)),
             title: const Text('Individus'),
             onTap: () {
               Navigator.of(context).pushReplacement(
@@ -104,7 +98,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.health_and_safety, color: Colors.green),
+            leading: Icon(Icons.health_and_safety, color: Color(primaryColor)),
             title: const Text('État Sanitaire'),
             onTap: () {
               Navigator.of(context).push(
@@ -115,7 +109,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.favorite, color: Colors.green),
+            leading: Icon(Icons.favorite, color: Color(primaryColor)),
             title: const Text('Reproduction'),
             onTap: () {
               Navigator.of(context).push(
@@ -126,7 +120,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.local_dining, color: Colors.green),
+            leading: Icon(Icons.local_dining, color: Color(primaryColor)),
             title: const Text('Alimentation'),
             onTap: () {
               Navigator.of(context).push(
@@ -137,7 +131,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.move_down, color: Colors.green),
+            leading: Icon(Icons.move_down, color: Color(primaryColor)),
             title: const Text('Transfert'),
             onTap: () {
               Navigator.of(context).push(
@@ -148,7 +142,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.search, color: Colors.green),
+            leading: Icon(Icons.search, color: Color(primaryColor)),
             title: const Text('Observation'),
             onTap: () {
               Navigator.of(context).push(
@@ -165,7 +159,7 @@ class MainDrawer extends StatelessWidget {
             color: Color(primaryColor),
           ),
           ListTile(
-            leading: const Icon(Icons.settings, color: Colors.green),
+            leading: Icon(Icons.settings, color: Color(primaryColor)),
             title: const Text('Paramètres'),
             onTap: () {
               Navigator.of(context).push(
@@ -176,7 +170,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.account_circle, color: Colors.green),
+            leading: Icon(Icons.account_circle, color: Color(primaryColor)),
             title: const Text('Compte'),
             onTap: () {
               Navigator.of(context).push(
@@ -188,7 +182,7 @@ class MainDrawer extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ListTile(
-            leading: const Icon(Icons.exit_to_app, color: Colors.green),
+            leading: Icon(Icons.exit_to_app, color: Color(primaryColor)),
             title: const Text('Déconnexion'),
             onTap: () async {
               await context.read<AuthProvider>().logout();
