@@ -45,7 +45,13 @@ class BaseScaffold extends StatelessWidget {
               color: Colors.black,
               size: 50,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AccountPage(),
+                ),
+              );
+            },
           ),
         ],
       ),

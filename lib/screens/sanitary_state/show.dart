@@ -45,13 +45,13 @@ class SanitaryStateDetailsPage extends StatelessWidget {
                       "Taille",
                       sanitaryState.height != null
                           ? sanitaryState.height.toString()
-                          : 'Non défini'),
+                          : 'Inchangé'),
                   const SizedBox(height: 8),
                   infoRow(
-                      "Hauteur",
+                      "Poids",
                       sanitaryState.weight != null
                           ? sanitaryState.weight.toString()
-                          : 'Non défini'),
+                          : 'Inchangé'),
                 ],
               ),
             ),
