@@ -9,7 +9,7 @@ class UserService {
   Future<User> fetchUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
-    
+
     if (userId == null) {
       throw Exception('User ID not found in SharedPreferences');
     }
@@ -22,6 +22,27 @@ class UserService {
       return User.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load user');
+    }
+  }
+
+  Future<bool> updateUser({
+    required String name,
+    required String email,
+    required String contact,
+  }) async {
+    final url = Uri.parse(
+      '$apiBaseUrl/api/user/${(await SharedPreferences.getInstance()).getInt('id')}',
+    );
+
+    final response = await http.post(
+      url,
+      body: {'name': name, 'email': email, 'contact': contact},
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

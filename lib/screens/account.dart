@@ -28,7 +28,49 @@ class _AccountPageState extends State<AccountPage> {
   final TextEditingController _organizationController = TextEditingController();
 
   bool _isEditing = false;
-  // bool _isLoading = false;
+  bool _isLoading = false;
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        final response = await _userService.updateUser(
+          name: _nameController.text,
+          email: _emailController.text,
+          contact: _contactController.text,
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response == true
+                ? 'Informations mises à jour.'
+                : 'Une erreur est survenue.'),
+          ),
+        );
+        if (response == true) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const AccountPage(),
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Une erreur est survenue.'),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -78,56 +120,71 @@ class _AccountPageState extends State<AccountPage> {
                               ),
                             ],
                           ),
-                          TextButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _isEditing = !_isEditing;
-                              });
-                            },
-                            icon: Icon(
-                              _isEditing ? Icons.check : Icons.edit_outlined,
-                              color: _isEditing
-                                  ? Color(primaryColor)
-                                  : Colors.amber,
-                            ),
-                            label: Text(
-                              _isEditing ? "Sauvegarder" : "Editer",
-                              style: TextStyle(
-                                color: _isEditing
-                                    ? Color(primaryColor)
-                                    : Colors.amber,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: _isEditing
-                                  ? Color(secondaryColor)
-                                  : Colors.amber[100],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                          ),
+                          _isLoading
+                              ? const CircularProgressIndicator()
+                              : TextButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      _isEditing = !_isEditing;
+                                      if (_isEditing == false) {
+                                        _submitForm();
+                                      }
+                                    });
+                                  },
+                                  icon: Icon(
+                                    _isEditing
+                                        ? Icons.check
+                                        : Icons.edit_outlined,
+                                    color: _isEditing
+                                        ? Color(primaryColor)
+                                        : Colors.amber,
+                                  ),
+                                  label: Text(
+                                    _isEditing ? "Sauvegarder" : "Editer",
+                                    style: TextStyle(
+                                      color: _isEditing
+                                          ? Color(primaryColor)
+                                          : Colors.amber,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _isEditing
+                                        ? Color(secondaryColor)
+                                        : Colors.amber[100],
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
                         ],
                       ),
                       const SizedBox(height: 40),
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Color(accentColor),
-                        child: user.picture != null
-                            ? Image.network(
-                                '$apiBaseUrl/storage/${user.picture}',
-                                width: 100,
-                                height: 100,
-                              )
-                            : Text(
-                                user.name[0], // Utilisation du snapshot
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(primaryColor),
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: user.picture != null
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      '$apiBaseUrl/storage/${user.picture}'),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child: user.picture == null
+                            ? Center(
+                                child: Text(
+                                  user.name[0], // Utilisation du snapshot
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(primaryColor),
+                                  ),
                                 ),
-                              ),
+                              )
+                            : null,
                       ),
                       const SizedBox(height: 20),
                       CustomTextFormField(
