@@ -129,7 +129,7 @@ class _EditRelocationPageState extends State<EditRelocationPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Ajouter un transfert',
+          'Modifier un transfert',
           style: TextStyle(fontSize: 16),
         ),
       ),

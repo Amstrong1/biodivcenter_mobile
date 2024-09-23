@@ -27,5 +27,3 @@ class Reproduction {
     );
   }
 }
-
-// "Espèce : ${animal.phase}", 

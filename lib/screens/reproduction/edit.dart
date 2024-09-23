@@ -114,7 +114,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Ajouter une reproduction',
+          'Modifier une reproduction',
           style: TextStyle(fontSize: 16),
         ),
       ),

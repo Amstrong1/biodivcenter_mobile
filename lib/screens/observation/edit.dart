@@ -76,7 +76,7 @@ class _EditObservationPageState extends State<EditObservationPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Ajouter une observation',
+          'Modifier une observation',
           style: TextStyle(fontSize: 16),
         ),
       ),

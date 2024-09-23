@@ -128,7 +128,7 @@ class _EditAlimentationPageState extends State<EditAlimentationPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Ajouter une alimentation',
+          'Modifier une alimentation',
           style: TextStyle(fontSize: 16),
         ),
       ),

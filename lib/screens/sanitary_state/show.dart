@@ -22,7 +22,7 @@ class SanitaryStateDetailsPage extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             infoCard(
-              title: "Détails :",
+              title: "Détails de l'etat sanitaire :",
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

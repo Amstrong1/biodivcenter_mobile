@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:biodivcenter/components/info_card.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/_animal.dart';
+import 'package:biodivcenter/models/_reproduction.dart';
+import 'package:biodivcenter/models/_sanitary_state.dart';
 import 'package:biodivcenter/screens/animal/edit.dart';
+import 'package:biodivcenter/screens/reproduction/show.dart';
+import 'package:biodivcenter/screens/sanitary_state/show.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AnimalDetailsPage extends StatelessWidget {
   const AnimalDetailsPage({super.key, required this.animal});
@@ -14,7 +21,6 @@ class AnimalDetailsPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          // Image en haut avec un titre et un retour en arrière
           Stack(
             children: [
               SizedBox(
@@ -161,8 +167,103 @@ class AnimalDetailsPage extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5), // Ombre
+              spreadRadius: 1,
+              blurRadius: 10,
+              offset: const Offset(5, 5), // Position de l'ombre
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.all(20),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: BottomNavigationBar(
+            selectedItemColor: Colors.black,
+            unselectedItemColor: Colors.black,
+            onTap: (index) {
+              switch (index) {
+                case 0:
+                  getSanitaryState(context);
+                  break;
+                case 1:
+                  getReproduction(context);
+                  break;
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.health_and_safety),
+                label: 'Etat sanitaire',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.favorite),
+                label: 'Reproduction',
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-  // Fonction pour créer une carte d'informations
+  Future<void> getReproduction(context) async {
+    final response = await http.get(
+      Uri.parse(
+        '$apiBaseUrl/api/api-reproduction/${animal.id}',
+      ),
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+
+      Reproduction reproduction = Reproduction.fromJson(jsonResponse);
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) =>
+              ReproductionDetailsPage(reproduction: reproduction),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Aucune donnée de reproduction enregistrée pour cet individu.",
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> getSanitaryState(context) async {
+    final response = await http.get(
+      Uri.parse(
+        '$apiBaseUrl/api/api-sanitary-state/${animal.id}',
+      ),
+    );
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+
+      SanitaryState sanitaryState = SanitaryState.fromJson(jsonResponse);
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) =>
+              SanitaryStateDetailsPage(sanitaryState: sanitaryState),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Aucune donnée d'état sanitaire enregistrée pour cet individu.",
+          ),
+        ),
+      );
+    }
+  }
 }
