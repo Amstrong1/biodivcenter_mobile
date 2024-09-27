@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:flutter/material.dart';
 
@@ -49,8 +51,8 @@ class CustomListTile extends StatelessWidget {
       leading: photo != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                '$apiBaseUrl/storage/${photo!}',
+              child: Image.file(
+                File(photo!),
                 width: 60,
                 height: 60,
                 fit: BoxFit.cover,

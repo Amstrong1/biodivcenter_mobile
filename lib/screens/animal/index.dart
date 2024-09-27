@@ -1,14 +1,11 @@
-import 'dart:convert';
 import 'package:biodivcenter/components/list_tile.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/_animal.dart';
 import 'package:biodivcenter/screens/animal/create.dart';
 import 'package:biodivcenter/screens/animal/edit.dart';
 import 'package:biodivcenter/screens/animal/show.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AnimalPage extends StatefulWidget {
   const AnimalPage({super.key});
@@ -18,35 +15,19 @@ class AnimalPage extends StatefulWidget {
 }
 
 class _AnimalPageState extends State<AnimalPage> {
-  late Future<List<Animal>> _animalList;
-
-  // Fonction pour récupérer la liste des animaux depuis l'API
-  Future<List<Animal>> fetchAnimals() async {
-    final response = await http.get(
-      Uri.parse(
-        '$apiBaseUrl/api/individus/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((animal) => Animal.fromJson(animal)).toList();
-    } else {
-      throw Exception('Failed to load animals');
-    }
-  }
+  late Future<List<Map<String, dynamic>>> _animalList;
 
   @override
   void initState() {
     super.initState();
-    _animalList = fetchAnimals();
+    _animalList = DatabaseHelper.instance.getAllAnimals();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: Center(
-        child: FutureBuilder<List<Animal>>(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _animalList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -74,12 +55,12 @@ class _AnimalPageState extends State<AnimalPage> {
                       child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          Animal animal = snapshot.data![index];
+                          final animal = snapshot.data![index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: CustomListTile(
-                              title: animal.name,
-                              subtitle: [animal.specieName],
+                              title: animal['name'],
+                              subtitle: [animal['french_name'].toString()],
                               onViewPressed: () {
                                 Navigator.push(
                                   context,
@@ -101,9 +82,9 @@ class _AnimalPageState extends State<AnimalPage> {
                                 );
                               },
                               onDeletePressed: () {
-                                deleteResource(animal.id);
+                                deleteResource(animal['id']);
                               },
-                              photo: animal.photo,
+                              photo: animal['photo'],
                             ),
                           );
                         },
@@ -171,26 +152,18 @@ class _AnimalPageState extends State<AnimalPage> {
     );
   }
 
-  void deleteResource(int id) {
+  Future<void> deleteResource(int id) async {
     try {
-      http
-          .delete(
-        Uri.parse(
-          '$apiBaseUrl/api/individu/$id',
+      await DatabaseHelper.instance.deleteAnimal(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Individu supprimé"),
         ),
-      )
-          .then(
-        (response) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Individu supprimé"),
-            ),
-          );
-          setState(() {
-            _animalList = fetchAnimals();
-          });
-        },
       );
+      setState(() {
+        _animalList = DatabaseHelper.instance.getAllAnimals();
+      });
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -199,7 +172,6 @@ class _AnimalPageState extends State<AnimalPage> {
           ),
         ),
       );
-      print(e.toString());
     }
   }
 }

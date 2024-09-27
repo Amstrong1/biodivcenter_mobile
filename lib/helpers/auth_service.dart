@@ -25,6 +25,11 @@ class AuthService {
       await prefs.setInt('site_id', data['user']['site_id']);
       await prefs.setString('name', data['user']['name']);
 
+      await prefs.setString('role', data['user']['role']);
+      await prefs.setString('organization', data['user']['organization']);
+
+      await fetchAndSaveSpecies();
+
       return true;
     } else {
       return false;

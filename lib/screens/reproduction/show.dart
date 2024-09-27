@@ -1,12 +1,12 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/_reproduction.dart';
+// import 'package:biodivcenter/models/_reproduction.dart';
 import 'package:biodivcenter/screens/reproduction/edit.dart';
 import 'package:flutter/material.dart';
 
 class ReproductionDetailsPage extends StatelessWidget {
   const ReproductionDetailsPage({super.key, required this.reproduction});
 
-  final Reproduction reproduction;
+  final Map<String, dynamic> reproduction;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +26,16 @@ class ReproductionDetailsPage extends StatelessWidget {
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  infoRow('Phase de reproduction', reproduction.phase),
+                  infoRow('Phase de reproduction', reproduction['phase']),
                   const SizedBox(height: 8),
-                  infoRow('Date', reproduction.date),
+                  infoRow('Date', reproduction['date']),
                   const SizedBox(height: 8),
-                  infoRow("Individu", reproduction.animalName),
+                  infoRow("Individu", reproduction['animalName']),
                   const SizedBox(height: 8),
-                  infoRow("Portée", reproduction.litterSize.toString()),
+                  infoRow("Portée", reproduction['litterSize'].toString()),
                   const SizedBox(height: 8),
                   infoRow(
-                      "Observation", reproduction.observation ?? "Non défini"),
+                      "Observation", reproduction['observation'] ?? "Non défini"),
                 ],
               ),
             ),

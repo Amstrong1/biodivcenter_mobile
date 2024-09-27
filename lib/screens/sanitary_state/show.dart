@@ -1,12 +1,11 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/_sanitary_state.dart';
 import 'package:biodivcenter/screens/sanitary_state/edit.dart';
 import 'package:flutter/material.dart';
 
 class SanitaryStateDetailsPage extends StatelessWidget {
   const SanitaryStateDetailsPage({super.key, required this.sanitaryState});
 
-  final SanitaryState sanitaryState;
+  final Map<String, dynamic> sanitaryState;
 
   @override
   Widget build(BuildContext context) {
@@ -26,31 +25,31 @@ class SanitaryStateDetailsPage extends StatelessWidget {
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  infoRow('Etat Sanitaire', sanitaryState.label),
+                  infoRow('Etat Sanitaire', sanitaryState['label']),
                   const SizedBox(height: 8),
-                  infoRow('Individu', sanitaryState.animalName),
+                  infoRow('Individu', sanitaryState['animalName']),
                   const SizedBox(height: 8),
-                  infoRow('Date', sanitaryState.date),
+                  infoRow('Date', sanitaryState['date']),
                   const SizedBox(height: 8),
-                  infoRow("Description", sanitaryState.description),
+                  infoRow("Description", sanitaryState['description']),
                   const SizedBox(height: 8),
                   infoRow("Action correctif",
-                      sanitaryState.correctiveAction ?? 'Non défini'),
+                      sanitaryState['correctiveAction'] ?? 'Non défini'),
                   const SizedBox(height: 8),
-                  infoRow("Coût", sanitaryState.cost),
+                  infoRow("Coût", sanitaryState['cost']),
                   const SizedBox(height: 8),
-                  infoRow("Température", sanitaryState.temperature.toString()),
+                  infoRow("Température", sanitaryState['temperature'].toString()),
                   const SizedBox(height: 8),
                   infoRow(
                       "Taille",
-                      sanitaryState.height != null
-                          ? sanitaryState.height.toString()
+                      sanitaryState['height'] != null
+                          ? sanitaryState['height'].toString()
                           : 'Inchangé'),
                   const SizedBox(height: 8),
                   infoRow(
                       "Poids",
-                      sanitaryState.weight != null
-                          ? sanitaryState.weight.toString()
+                      sanitaryState['weight'] != null
+                          ? sanitaryState['weight'].toString()
                           : 'Inchangé'),
                 ],
               ),

@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:biodivcenter/components/list_tile.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/_sanitary_state.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/sanitary_state/create.dart';
 import 'package:biodivcenter/screens/sanitary_state/edit.dart';
 import 'package:biodivcenter/screens/sanitary_state/show.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SanitaryStatePage extends StatefulWidget {
   const SanitaryStatePage({super.key});
@@ -19,37 +15,19 @@ class SanitaryStatePage extends StatefulWidget {
 }
 
 class _SanitaryStatePageState extends State<SanitaryStatePage> {
-  late Future<List<SanitaryState>> _sanitaryStateList;
-
-  // Fonction pour récupérer la liste des états sanitaires depuis l'API
-  Future<List<SanitaryState>> fetchSanitaryStates() async {
-    final response = await http.get(
-      Uri.parse(
-        '$apiBaseUrl/api/api-sanitary-states/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse
-          .map((sanitaryState) => SanitaryState.fromJson(sanitaryState))
-          .toList();
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
+  late Future<List<Map<String, dynamic>>> _sanitaryStateList;
 
   @override
   void initState() {
     super.initState();
-    _sanitaryStateList = fetchSanitaryStates();
+    _sanitaryStateList = DatabaseHelper.instance.getAllSanitaryStates();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: Center(
-        child: FutureBuilder<List<SanitaryState>>(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _sanitaryStateList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -77,12 +55,12 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
                       child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          SanitaryState sanitaryState = snapshot.data![index];
+                          final sanitaryState = snapshot.data![index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: CustomListTile(
-                              title: sanitaryState.animalName,
-                              subtitle: [sanitaryState.label],
+                              title: sanitaryState['name'],
+                              subtitle: [sanitaryState['label']],
                               onViewPressed: () {
                                 Navigator.push(
                                   context,
@@ -104,7 +82,7 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
                                 );
                               },
                               onDeletePressed: () {
-                                deleteResource(sanitaryState.id);
+                                deleteResource(sanitaryState['id']);
                               },
                             ),
                           );
@@ -174,39 +152,24 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
     );
   }
 
-  void deleteResource(int id) {
+  void deleteResource(int id) async {
     try {
-      http
-          .delete(
-        Uri.parse(
-          '$apiBaseUrl/api/api-sanitary-state/$id',
+      await DatabaseHelper.instance.deleteSanitaryState(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Etat sanitaire supprimé"),
         ),
-      )
-          .then((response) {
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Etat sanitaire supprimé"),
-            ),
-          );
-          setState(() {
-            _sanitaryStateList = fetchSanitaryStates();
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Erreur lors de la suppression"),
-            ),
-          );
-        }
+      );
+      setState(() {
+        _sanitaryStateList = DatabaseHelper.instance.getAllSanitaryStates();
       });
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Erreur lors de la suppression"),
         ),
       );
-      print(e.toString());
     }
   }
 }

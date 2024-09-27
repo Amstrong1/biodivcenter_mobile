@@ -3,6 +3,7 @@ import 'package:biodivcenter/helpers/user_service.dart';
 import 'package:biodivcenter/models/_user.dart';
 import 'package:biodivcenter/screens/account.dart';
 import 'package:biodivcenter/screens/base.dart';
+// import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
@@ -16,10 +17,18 @@ class _SettingPageState extends State<SettingPage> {
   late Future<User> _user;
   final UserService _userService = UserService();
 
+  // Future<User> fetchUser() async {
+  //   var connectivityResult = await Connectivity().checkConnectivity();
+  //   if (connectivityResult == ConnectivityResult.mobile ||
+  //     connectivityResult == ConnectivityResult.wifi) {
+  //     _user = _userService.fetchUser();
+  //   }
+  // }
+
   @override
   void initState() {
     super.initState();
-    _user = _userService.fetchUser(); // Appeler la méthode fetchUser
+    _user = _userService.fetchUser();
   }
 
   @override
@@ -42,7 +51,7 @@ class _SettingPageState extends State<SettingPage> {
                 ],
               );
             } else {
-              final user = snapshot.data!; // Accéder à l'utilisateur récupéré
+              final user = snapshot.data!;
               return Column(
                 children: [
                   Expanded(
@@ -71,23 +80,30 @@ class _SettingPageState extends State<SettingPage> {
                           const SizedBox(height: 20),
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Color(accentColor),
-                                child: user.picture != null
-                                    ? Image.network(
-                                        '$apiBaseUrl/storage/${user.picture}',
-                                        width: 100,
-                                        height: 100,
-                                      )
-                                    : Text(
-                                        user.name[0], // Utilisation du snapshot
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: user.picture != null
+                                      ? DecorationImage(
+                                          image: NetworkImage(
+                                            '$apiBaseUrl/storage/${user.picture}',
+                                          ),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                ),
+                                child: user.picture == null
+                                    ? Text(
+                                        user.name[0],
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: Color(primaryColor),
                                         ),
-                                      ),
+                                      )
+                                    : null,
                               ),
                               const SizedBox(width: 10),
                               Expanded(

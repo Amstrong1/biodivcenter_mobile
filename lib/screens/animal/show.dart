@@ -1,20 +1,16 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/_animal.dart';
-import 'package:biodivcenter/models/_reproduction.dart';
-import 'package:biodivcenter/models/_sanitary_state.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
+// import 'package:biodivcenter/helpers/global.dart';
+// import 'package:biodivcenter/models/_animal.dart';
 import 'package:biodivcenter/screens/animal/edit.dart';
-import 'package:biodivcenter/screens/reproduction/show.dart';
-import 'package:biodivcenter/screens/sanitary_state/show.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class AnimalDetailsPage extends StatelessWidget {
   const AnimalDetailsPage({super.key, required this.animal});
 
-  final Animal animal;
+  final Map<String, dynamic> animal;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +24,8 @@ class AnimalDetailsPage extends StatelessWidget {
                 width: double.infinity,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: Image.network(
-                    '$apiBaseUrl/storage/${animal.photo!}',
+                  child: Image.file(
+                    File(animal['photo'].toString()),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -51,7 +47,7 @@ class AnimalDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      animal.name,
+                      animal['name'],
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -59,7 +55,7 @@ class AnimalDetailsPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      animal.specieName,
+                      animal['french_name'],
                       style: const TextStyle(
                         color: Colors.white,
                         fontStyle: FontStyle.italic,
@@ -83,11 +79,11 @@ class AnimalDetailsPage extends StatelessWidget {
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        infoRow('Sexe', animal.sex),
-                        infoRow('Date de naissance', animal.birthdate),
-                        infoRow("Date d'enregistrement", animal.createdAt),
-                        infoRow("Poids", '${animal.weight} kg'),
-                        infoRow("Taille", '${animal.height}cm'),
+                        infoRow('Sexe', animal['sex']),
+                        infoRow('Date de naissance', animal['birthdate']),
+                        infoRow("Date d'enregistrement", animal['created_at']),
+                        infoRow("Poids", '${animal['weight']} kg'),
+                        infoRow("Taille", '${animal['height']} cm'),
                       ],
                     ),
                   ),
@@ -97,8 +93,8 @@ class AnimalDetailsPage extends StatelessWidget {
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        infoRow('Provenance', animal.origin),
-                        infoRow('Parent', animal.parent ?? 'Non défini'),
+                        infoRow('Provenance', animal['origin']),
+                        infoRow('Parent', animal['parent'] ?? 'Non défini'),
                       ],
                     ),
                   ),
@@ -108,10 +104,8 @@ class AnimalDetailsPage extends StatelessWidget {
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        infoRow('État', animal.state),
-                        infoRow('Description', animal.description),
-                        infoRow('Etat sanitaire', animal.sanitaryStateLabel),
-                        infoRow('Observation', animal.sanitaryStateDetail),
+                        infoRow('État', animal['state']),
+                        infoRow('Description', animal['description']),
                       ],
                     ),
                   ),
@@ -188,10 +182,10 @@ class AnimalDetailsPage extends StatelessWidget {
             onTap: (index) {
               switch (index) {
                 case 0:
-                  getSanitaryState(context);
+                  DatabaseHelper.instance.getSanitaryState(animal['id']);
                   break;
                 case 1:
-                  getReproduction(context);
+                  DatabaseHelper.instance.getReproduction(animal['id']);
                   break;
               }
             },
@@ -209,61 +203,5 @@ class AnimalDetailsPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> getReproduction(context) async {
-    final response = await http.get(
-      Uri.parse(
-        '$apiBaseUrl/api/api-reproduction/${animal.id}',
-      ),
-    );
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-
-      Reproduction reproduction = Reproduction.fromJson(jsonResponse);
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-              ReproductionDetailsPage(reproduction: reproduction),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Aucune donnée de reproduction enregistrée pour cet individu.",
-          ),
-        ),
-      );
-    }
-  }
-
-  Future<void> getSanitaryState(context) async {
-    final response = await http.get(
-      Uri.parse(
-        '$apiBaseUrl/api/api-sanitary-state/${animal.id}',
-      ),
-    );
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-
-      SanitaryState sanitaryState = SanitaryState.fromJson(jsonResponse);
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-              SanitaryStateDetailsPage(sanitaryState: sanitaryState),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Aucune donnée d'état sanitaire enregistrée pour cet individu.",
-          ),
-        ),
-      );
-    }
   }
 }

@@ -1,12 +1,11 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/_observation.dart';
 import 'package:biodivcenter/screens/observation/edit.dart';
 import 'package:flutter/material.dart';
 
 class ObservationDetailsPage extends StatelessWidget {
   const ObservationDetailsPage({super.key, required this.observation});
 
-  final Observation observation;
+  final Map<String, dynamic> observation;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +25,9 @@ class ObservationDetailsPage extends StatelessWidget {
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  infoRow('Objet', observation.subject),
+                  infoRow('Objet', observation['subject']),
                   const SizedBox(height: 8),
-                  infoRow('Observation', observation.content),
+                  infoRow('Observation', observation['content']),
                 ],
               ),
             ),

@@ -1,12 +1,12 @@
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/models/_alimentation.dart';
+// import 'package:biodivcenter/models/_alimentation.dart';
 import 'package:biodivcenter/screens/alimentation/edit.dart';
 import 'package:flutter/material.dart';
 
 class AlimentationDetailsPage extends StatelessWidget {
   const AlimentationDetailsPage({super.key, required this.alimentation});
 
-  final Alimentation alimentation;
+  final Map<String, dynamic> alimentation;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,9 @@ class AlimentationDetailsPage extends StatelessWidget {
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  infoRow('Espece', alimentation.specieName),
+                  infoRow('Espece', alimentation['french_name']),
                   const SizedBox(height: 8),
-                  infoRow('Age', alimentation.ageRange),
+                  infoRow('Age', alimentation['ageRange']),
                 ],
               ),
             ),
@@ -37,13 +37,13 @@ class AlimentationDetailsPage extends StatelessWidget {
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  infoRow('Aliment', alimentation.food),
+                  infoRow('Aliment', alimentation['food']),
                   const SizedBox(height: 8),
-                  infoRow('Fréquence', alimentation.frequency),
+                  infoRow('Fréquence', alimentation['frequency']),
                   const SizedBox(height: 8),
-                  infoRow('Quantité', '${alimentation.quantity} kg'),
+                  infoRow('Quantité', '${alimentation['quantity']} kg'),
                   const SizedBox(height: 8),
-                  infoRow('Coût', alimentation.cost),
+                  infoRow('Coût', alimentation['cost']),
                 ],
               ),
             ),

@@ -5,7 +5,7 @@ import 'package:biodivcenter/screens/alimentation/index.dart';
 import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:biodivcenter/screens/login.dart';
 import 'package:biodivcenter/screens/observation/index.dart';
-import 'package:biodivcenter/screens/relocation/index.dart';
+// import 'package:biodivcenter/screens/relocation/index.dart';
 import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:biodivcenter/screens/setting.dart';
@@ -136,17 +136,17 @@ class MainDrawer extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: Icon(Icons.move_down, color: Color(primaryColor)),
-            title: const Text('Transfert'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const RelocationPage(),
-                ),
-              );
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.move_down, color: Color(primaryColor)),
+          //   title: const Text('Transfert'),
+          //   onTap: () {
+          //     Navigator.of(context).push(
+          //       MaterialPageRoute(
+          //         builder: (context) => const RelocationPage(),
+          //       ),
+          //     );
+          //   },
+          // ),
           ListTile(
             leading: Icon(Icons.search, color: Color(primaryColor)),
             title: const Text('Observation'),

@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:biodivcenter/components/list_tile.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/_observation.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/observation/create.dart';
 import 'package:biodivcenter/screens/observation/edit.dart';
 import 'package:biodivcenter/screens/observation/show.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ObservationPage extends StatefulWidget {
   const ObservationPage({super.key});
@@ -19,42 +15,19 @@ class ObservationPage extends StatefulWidget {
 }
 
 class _ObservationPageState extends State<ObservationPage> {
-  late Future<List<Observation>> _observationList;
-
-  // Fonction pour récupérer la liste des observations depuis l'API
-  Future<List<Observation>> fetchObservations() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final int? siteId = prefs.getInt('site_id');
-
-    if (siteId == null) {
-      throw Exception('Le site n\'est pas défini');
-    }
-
-    final response = await http.get(
-      Uri.parse('$apiBaseUrl/api/api-observations/$siteId'),
-    );
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse
-          .map((observation) => Observation.fromJson(observation))
-          .toList();
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
+  late Future<List<Map<String, dynamic>>> _observationList;
 
   @override
   void initState() {
     super.initState();
-    _observationList = fetchObservations();
+    _observationList = DatabaseHelper.instance.getAllObservations();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: Center(
-        child: FutureBuilder<List<Observation>>(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _observationList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -82,14 +55,16 @@ class _ObservationPageState extends State<ObservationPage> {
                       child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          Observation observation = snapshot.data![index];
+                          final observation = snapshot.data![index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8.0,
                             ),
                             child: CustomListTile(
-                              title: observation.subject,
-                              subtitle: [observation.date],
+                              title: observation['subject'],
+                              subtitle: [
+                                observation['created_at'].split('T')[0]
+                              ],
                               onViewPressed: () {
                                 Navigator.push(
                                   context,
@@ -111,7 +86,7 @@ class _ObservationPageState extends State<ObservationPage> {
                                 );
                               },
                               onDeletePressed: () {
-                                deleteResource(observation.id);
+                                deleteResource(observation['id']);
                               },
                             ),
                           );
@@ -180,31 +155,24 @@ class _ObservationPageState extends State<ObservationPage> {
     );
   }
 
-  void deleteResource(int id) {
+  void deleteResource(int id) async {
     try {
-      http
-          .delete(
-        Uri.parse('$apiBaseUrl/api/api-observation/$id'),
-      )
-          .then(
-        (response) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Observation supprimée"),
-            ),
-          );
-          setState(() {
-            _observationList = fetchObservations();
-          });
-        },
+      await DatabaseHelper.instance.deleteObservation(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Observation supprimée"),
+        ),
       );
+      setState(() {
+        _observationList = DatabaseHelper.instance.getAllObservations();
+      });
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Erreur lors de la suppression"),
         ),
       );
-      print(e.toString());
     }
   }
 }

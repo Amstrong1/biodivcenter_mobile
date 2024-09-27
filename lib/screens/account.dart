@@ -168,7 +168,8 @@ class _AccountPageState extends State<AccountPage> {
                           image: user.picture != null
                               ? DecorationImage(
                                   image: NetworkImage(
-                                      '$apiBaseUrl/storage/${user.picture}'),
+                                    '$apiBaseUrl/storage/${user.picture}',
+                                  ),
                                   fit: BoxFit.cover,
                                 )
                               : null,

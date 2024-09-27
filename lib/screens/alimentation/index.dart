@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:biodivcenter/components/list_tile.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/_alimentation.dart';
 import 'package:biodivcenter/screens/alimentation/create.dart';
 import 'package:biodivcenter/screens/alimentation/edit.dart';
 import 'package:biodivcenter/screens/alimentation/show.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AlimentationPage extends StatefulWidget {
   const AlimentationPage({super.key});
@@ -19,37 +15,19 @@ class AlimentationPage extends StatefulWidget {
 }
 
 class _AlimentationPageState extends State<AlimentationPage> {
-  late Future<List<Alimentation>> _alimentationList;
-
-  // Fonction pour récupérer la liste des alimentations depuis l'API
-  Future<List<Alimentation>> fetchAlimentations() async {
-    final response = await http.get(
-      Uri.parse(
-        '$apiBaseUrl/api/api-alimentations/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse
-          .map((alimentation) => Alimentation.fromJson(alimentation))
-          .toList();
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
+  late Future<List<Map<String, dynamic>>> _alimentationList;
 
   @override
   void initState() {
     super.initState();
-    _alimentationList = fetchAlimentations();
+    _alimentationList = DatabaseHelper.instance.getAllAlimentations();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: Center(
-        child: FutureBuilder<List<Alimentation>>(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _alimentationList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -77,12 +55,12 @@ class _AlimentationPageState extends State<AlimentationPage> {
                       child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          Alimentation alimentation = snapshot.data![index];
+                          final alimentation = snapshot.data![index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: CustomListTile(
-                              title: alimentation.food,
-                              subtitle: [alimentation.specieName],
+                              title: alimentation['food'],
+                              subtitle: [alimentation['french_name']],
                               onViewPressed: () {
                                 Navigator.push(
                                   context,
@@ -94,7 +72,7 @@ class _AlimentationPageState extends State<AlimentationPage> {
                                 );
                               },
                               onDeletePressed: () {
-                                deleteResource(alimentation.id);
+                                deleteResource(alimentation['id']);
                               },
                               onEditPressed: () {
                                 Navigator.push(
@@ -173,39 +151,25 @@ class _AlimentationPageState extends State<AlimentationPage> {
     );
   }
 
-  void deleteResource(int id) {
+  void deleteResource(int id) async {
     try {
-      http
-          .delete(
-        Uri.parse(
-          '$apiBaseUrl/api/api-alimentation/$id',
+      await DatabaseHelper.instance.deleteAlimentation(id);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Données supprimées"),
         ),
-      )
-          .then((response) {
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Données supprimées"),
-            ),
-          );
-          setState(() {
-            _alimentationList = fetchAlimentations();
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Erreur lors de la suppression"),
-            ),
-          );
-        }
+      );
+      setState(() {
+        _alimentationList = DatabaseHelper.instance.getAllAlimentations();
       });
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Erreur lors de la suppression"),
         ),
       );
-      print(e.toString());
     }
   }
 }

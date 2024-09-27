@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:biodivcenter/components/list_tile.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
-import 'package:biodivcenter/models/_reproduction.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/reproduction/create.dart';
+import 'package:biodivcenter/screens/reproduction/edit.dart';
 import 'package:biodivcenter/screens/reproduction/show.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ReproductionPage extends StatefulWidget {
   const ReproductionPage({super.key});
@@ -18,37 +15,19 @@ class ReproductionPage extends StatefulWidget {
 }
 
 class _ReproductionPageState extends State<ReproductionPage> {
-  late Future<List<Reproduction>> _reproductionList;
-
-  // Fonction pour récupérer la liste des reproductions depuis l'API
-  Future<List<Reproduction>> fetchReproductions() async {
-    final response = await http.get(
-      Uri.parse(
-        '$apiBaseUrl/api/api-reproductions/${(await SharedPreferences.getInstance()).getInt('site_id')!}',
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse
-          .map((reproduction) => Reproduction.fromJson(reproduction))
-          .toList();
-    } else {
-      throw Exception('Failed to load reproductions');
-    }
-  }
+  late Future<List<Map<String, dynamic>>> _reproductionList;
 
   @override
   void initState() {
     super.initState();
-    _reproductionList = fetchReproductions();
+    _reproductionList = DatabaseHelper.instance.getAllReproductions();
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: Center(
-        child: FutureBuilder<List<Reproduction>>(
+        child: FutureBuilder<List<Map<String, dynamic>>>(
           future: _reproductionList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -76,12 +55,15 @@ class _ReproductionPageState extends State<ReproductionPage> {
                       child: ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
-                          Reproduction reproduction = snapshot.data![index];
+                          final reproduction = snapshot.data![index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: CustomListTile(
-                              title: reproduction.animalName,
-                              subtitle: [reproduction.phase, reproduction.date],
+                              title: reproduction['animalName'],
+                              subtitle: [
+                                reproduction['phase'],
+                                reproduction['date']
+                              ],
                               onViewPressed: () {
                                 Navigator.push(
                                   context,
@@ -92,9 +74,18 @@ class _ReproductionPageState extends State<ReproductionPage> {
                                   ),
                                 );
                               },
-                              onEditPressed: () {},
+                              onEditPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => EditReproductionPage(
+                                      reproduction: reproduction,
+                                    ),
+                                  ),
+                                );
+                              },
                               onDeletePressed: () {
-                                deleteResource(reproduction.id);
+                                deleteResource(reproduction['id']);
                               },
                             ),
                           );
@@ -162,39 +153,24 @@ class _ReproductionPageState extends State<ReproductionPage> {
     );
   }
 
-  void deleteResource(int id) {
+  void deleteResource(int id) async {
     try {
-      http
-          .delete(
-        Uri.parse(
-          '$apiBaseUrl/api/api-reproduction/$id',
+      await DatabaseHelper.instance.deleteReproduction(id);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Reproduction supprimée"),
         ),
-      )
-          .then((response) {
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Reproduction supprimée"),
-            ),
-          );
-          setState(() {
-            _reproductionList = fetchReproductions();
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Erreur lors de la suppression"),
-            ),
-          );
-        }
+      );
+      setState(() {
+        _reproductionList = DatabaseHelper.instance.getAllReproductions();
       });
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Erreur lors de la suppression"),
         ),
       );
-      print(e.toString());
     }
   }
 }

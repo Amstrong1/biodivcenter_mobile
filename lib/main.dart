@@ -1,9 +1,12 @@
 import 'package:biodivcenter/helpers/auth_provider.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/screens/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.database;
   runApp(const MyApp());
 }
 
