@@ -18,35 +18,34 @@ class _SettingPageState extends State<SettingPage> {
   final UserService _userService = UserService();
 
   Future<User> getUser() async {
-  try {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      _user = _userService.fetchUser(); 
-      return _user;
-    } else {
-      Map<String, dynamic> prefs = await getSharedPrefs();
+    try {
+      var connectivityResult = await Connectivity().checkConnectivity();
 
-      return User(
-        id: prefs['user_id'],
-        name: prefs['name'],
-        email: prefs['email'],
-        contact: prefs['contact'],
-        role: prefs['role'],
-        ong: prefs['organization'],
-        country: prefs['country'],
-      );
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
+        return _userService.fetchUser();
+      } else {
+        Map<String, dynamic> prefs = await getSharedPrefs();
+
+        return User(
+          id: prefs['user_id'],
+          name: prefs['name'],
+          email: prefs['email'],
+          contact: prefs['contact'],
+          role: prefs['role'],
+          ong: prefs['organization'],
+          country: prefs['country'],
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch user: $e');
     }
-  } catch (e) {
-    throw Exception('Failed to fetch user: $e');
   }
-}
 
   @override
   void initState() {
     super.initState();
-    getUser();
+    _user = getUser();
   }
 
   @override
@@ -102,6 +101,7 @@ class _SettingPageState extends State<SettingPage> {
                                 width: 80,
                                 height: 80,
                                 decoration: BoxDecoration(
+                                  color: Color(secondaryColor),
                                   shape: BoxShape.circle,
                                   image: user.picture != null
                                       ? DecorationImage(
@@ -113,13 +113,19 @@ class _SettingPageState extends State<SettingPage> {
                                       : null,
                                 ),
                                 child: user.picture == null
-                                    ? Text(
-                                        user.name[0],
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(primaryColor),
-                                        ),
+                                    ? Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            user.name[0],
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(primaryColor),
+                                            ),
+                                          )
+                                        ],
                                       )
                                     : null,
                               ),
@@ -148,11 +154,25 @@ class _SettingPageState extends State<SettingPage> {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          link(
-                            const AccountPage(),
-                            Icons.lock_outline_rounded,
-                            'Compte',
-                            'Informations personnelles, contact',
+                          FutureBuilder<bool>(
+                            future: checkInternetConnection(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<bool> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasData &&
+                                  snapshot.data == true) {
+                                return link(
+                                  const AccountPage(),
+                                  Icons.lock_outline_rounded,
+                                  'Compte',
+                                  'Informations personnelles, contact',
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
                           ),
                           const SizedBox(height: 10),
                           link(
@@ -177,6 +197,37 @@ class _SettingPageState extends State<SettingPage> {
                     padding: const EdgeInsets.only(bottom: 20.0),
                     child: Column(
                       children: [
+                        FutureBuilder<bool>(
+                          future: checkInternetConnection(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<bool> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else if (snapshot.hasData &&
+                                snapshot.data == true) {
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(primaryColor),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  minimumSize: const Size(double.infinity, 50),
+                                ),
+                                onPressed: () {},
+                                child: const Text(
+                                  'Synchroniser les données',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 20),
                         const Text(
                           'from',
                           style: TextStyle(fontSize: 10),

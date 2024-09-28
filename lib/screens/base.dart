@@ -8,7 +8,6 @@ import 'package:biodivcenter/screens/observation/index.dart';
 import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:biodivcenter/screens/setting.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,18 +38,29 @@ class BaseScaffold extends StatelessWidget {
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.person,
-              color: Colors.black,
-              size: 50,
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AccountPage(),
-                ),
-              );
+          FutureBuilder<bool>(
+            future: checkInternetConnection(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasData && snapshot.data == true) {
+                return IconButton(
+                  icon: const Icon(
+                    Icons.person,
+                    color: Colors.black,
+                    size: 50,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AccountPage(),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return Container();
+              }
             },
           ),
         ],
@@ -165,8 +175,7 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           FutureBuilder<bool>(
-            future:
-                _checkInternetConnection(),
+            future: checkInternetConnection(),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -203,10 +212,5 @@ class MainDrawer extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<bool> _checkInternetConnection() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
   }
 }

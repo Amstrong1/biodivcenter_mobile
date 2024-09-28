@@ -2,6 +2,7 @@ library biodivcenter.helpers.global;
 
 import 'dart:io';
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 
@@ -94,3 +95,10 @@ buildImagePicker(selectImage, selectedImage) {
     ),
   );
 }
+
+
+
+  Future<bool> checkInternetConnection() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
