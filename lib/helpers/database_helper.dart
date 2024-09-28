@@ -119,7 +119,11 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getAllReproductions() async {
     final db = await instance.database;
-    return await db.query('reproductions');
+    return await db.rawQuery('''
+      SELECT reproductions.*, animals.name
+      FROM reproductions
+      JOIN animals ON reproductions.animal_id = animals.id
+    ''');
   }
 
   Future<List<Map<String, dynamic>>> getAllAlimentations() async {

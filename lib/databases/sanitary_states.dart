@@ -19,8 +19,7 @@ class SanitaryStatesTable {
         slug TEXT NOT NULL,
         is_synced BOOLEAN NOT NULL DEFAULT 0,  -- Attribut pour la synchronisation
         created_at TEXT,
-        updated_at TEXT,
-        deleted_at TEXT
+        updated_at TEXT
       )
     ''');
   }

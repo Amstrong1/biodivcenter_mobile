@@ -27,28 +27,36 @@ class SanitaryStateDetailsPage extends StatelessWidget {
                 children: [
                   infoRow('Etat Sanitaire', sanitaryState['label']),
                   const SizedBox(height: 8),
-                  infoRow('Individu', sanitaryState['animalName']),
+                  infoRow('Individu', sanitaryState['name']),
                   const SizedBox(height: 8),
-                  infoRow('Date', sanitaryState['date']),
+                  infoRow('Date', sanitaryState['created_at'].split('T')[0]),
                   const SizedBox(height: 8),
                   infoRow("Description", sanitaryState['description']),
                   const SizedBox(height: 8),
                   infoRow("Action correctif",
                       sanitaryState['correctiveAction'] ?? 'Non défini'),
                   const SizedBox(height: 8),
-                  infoRow("Coût", sanitaryState['cost']),
+                  infoRow(
+                      "Coût",
+                      sanitaryState['cost'] != ''
+                          ? sanitaryState['cost']
+                          : 'Non défini'),
                   const SizedBox(height: 8),
-                  infoRow("Température", sanitaryState['temperature'].toString()),
+                  infoRow(
+                      "Température",
+                      sanitaryState['temperature'].toString() != ""
+                          ? sanitaryState['temperature'].toString()
+                          : 'Normal'),
                   const SizedBox(height: 8),
                   infoRow(
                       "Taille",
-                      sanitaryState['height'] != null
+                      sanitaryState['height'] != ''
                           ? sanitaryState['height'].toString()
                           : 'Inchangé'),
                   const SizedBox(height: 8),
                   infoRow(
                       "Poids",
-                      sanitaryState['weight'] != null
+                      sanitaryState['weight'] != ''
                           ? sanitaryState['weight'].toString()
                           : 'Inchangé'),
                 ],

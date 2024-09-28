@@ -1,5 +1,4 @@
 import 'package:biodivcenter/components/info_card.dart';
-// import 'package:biodivcenter/models/_reproduction.dart';
 import 'package:biodivcenter/screens/reproduction/edit.dart';
 import 'package:flutter/material.dart';
 
@@ -30,12 +29,16 @@ class ReproductionDetailsPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   infoRow('Date', reproduction['date']),
                   const SizedBox(height: 8),
-                  infoRow("Individu", reproduction['animalName']),
-                  const SizedBox(height: 8),
-                  infoRow("Portée", reproduction['litterSize'].toString()),
+                  infoRow("Individu", reproduction['name']),
                   const SizedBox(height: 8),
                   infoRow(
-                      "Observation", reproduction['observation'] ?? "Non défini"),
+                      "Portée",
+                      reproduction['litterSize'].toString() != 'null'
+                          ? reproduction['litterSize'].toString()
+                          : 'Non défini'),
+                  const SizedBox(height: 8),
+                  infoRow("Observation",
+                      reproduction['observation'] ?? "Non défini"),
                 ],
               ),
             ),
@@ -81,6 +84,4 @@ class ReproductionDetailsPage extends StatelessWidget {
       ),
     );
   }
-
-  // Fonction pour créer une carte d'informations
 }

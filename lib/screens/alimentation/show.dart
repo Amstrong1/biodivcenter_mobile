@@ -1,5 +1,4 @@
 import 'package:biodivcenter/components/info_card.dart';
-// import 'package:biodivcenter/models/_alimentation.dart';
 import 'package:biodivcenter/screens/alimentation/edit.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +26,7 @@ class AlimentationDetailsPage extends StatelessWidget {
                 children: [
                   infoRow('Espece', alimentation['french_name']),
                   const SizedBox(height: 8),
-                  infoRow('Age', alimentation['ageRange']),
+                  infoRow('Age', alimentation['ageRange'] ?? 'Non défini'),
                 ],
               ),
             ),
@@ -43,7 +42,7 @@ class AlimentationDetailsPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   infoRow('Quantité', '${alimentation['quantity']} kg'),
                   const SizedBox(height: 8),
-                  infoRow('Coût', alimentation['cost']),
+                  infoRow('Coût', alimentation['cost'].toString()),
                 ],
               ),
             ),

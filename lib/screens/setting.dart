@@ -1,4 +1,9 @@
+import 'package:biodivcenter/helpers/alimentation_sync.dart';
+import 'package:biodivcenter/helpers/animal_sync.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/helpers/observation_sync.dart';
+import 'package:biodivcenter/helpers/reproduction_sync.dart';
+import 'package:biodivcenter/helpers/sanitary_state_sync.dart';
 import 'package:biodivcenter/helpers/user_service.dart';
 import 'package:biodivcenter/models/_user.dart';
 import 'package:biodivcenter/screens/account.dart';
@@ -16,6 +21,11 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   late Future<User> _user;
   final UserService _userService = UserService();
+  final AnimalSyncService _animalSyncService = AnimalSyncService();
+  final ReproductionSyncService _reproductionSyncService = ReproductionSyncService();
+  final AlimentationSyncService _alimentationSyncService = AlimentationSyncService();
+  final ObservationSyncService _observationSyncService = ObservationSyncService();
+  final SanitaryStateSyncService _sanitaryStateSyncService = SanitaryStateSyncService();
 
   Future<User> getUser() async {
     try {
@@ -164,6 +174,7 @@ class _SettingPageState extends State<SettingPage> {
                               } else if (snapshot.hasData &&
                                   snapshot.data == true) {
                                 return link(
+                                  context,
                                   const AccountPage(),
                                   Icons.lock_outline_rounded,
                                   'Compte',
@@ -176,6 +187,7 @@ class _SettingPageState extends State<SettingPage> {
                           ),
                           const SizedBox(height: 10),
                           link(
+                            context,
                             null,
                             Icons.chat_outlined,
                             'Feedback',
@@ -183,6 +195,7 @@ class _SettingPageState extends State<SettingPage> {
                           ),
                           const SizedBox(height: 10),
                           link(
+                            context,
                             null,
                             Icons.info_outline,
                             'A propos',
@@ -192,7 +205,6 @@ class _SettingPageState extends State<SettingPage> {
                       ),
                     ),
                   ),
-                  // Section contenant "from" et le logo fixée en bas de la page
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
                     child: Column(
@@ -216,7 +228,13 @@ class _SettingPageState extends State<SettingPage> {
                                   ),
                                   minimumSize: const Size(double.infinity, 50),
                                 ),
-                                onPressed: () {},
+                                onPressed: () async {
+                                  _animalSyncService.syncAnimals();
+                                  _reproductionSyncService.syncReproductions();
+                                  _alimentationSyncService.syncAlimentations();
+                                  _observationSyncService.syncObservations();
+                                  _sanitaryStateSyncService.syncSanitaryStates();                                  
+                                },
                                 child: const Text(
                                   'Synchroniser les données',
                                   style: TextStyle(color: Colors.white),
@@ -245,7 +263,13 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  Widget link(Widget? route, IconData icon, String title, String content) {
+  Widget link(
+    context,
+    Widget? route,
+    IconData icon,
+    String title,
+    String content,
+  ) {
     return TextButton(
       onPressed: () {
         if (route != null) {

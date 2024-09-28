@@ -27,7 +27,7 @@ class ObservationDetailsPage extends StatelessWidget {
                 children: [
                   infoRow('Objet', observation['subject']),
                   const SizedBox(height: 8),
-                  infoRow('Observation', observation['content']),
+                  infoRow('Observation', observation['observation']),
                 ],
               ),
             ),

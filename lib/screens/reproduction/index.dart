@@ -59,7 +59,7 @@ class _ReproductionPageState extends State<ReproductionPage> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: CustomListTile(
-                              title: reproduction['animalName'],
+                              title: reproduction['name'],
                               subtitle: [
                                 reproduction['phase'],
                                 reproduction['date']

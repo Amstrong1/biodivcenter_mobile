@@ -235,6 +235,7 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
                     const SizedBox(height: 20),
                     DatePickerFormField(
                       labelText: 'Date de naissance',
+                      selectedDate: _selectedDate,
                       onDateSelected: (selectedDate) {
                         setState(() {
                           _selectedDate = selectedDate;
