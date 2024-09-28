@@ -1,14 +1,13 @@
 library biodivcenter.helpers.global;
 
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:biodivcenter/helpers/database_helper.dart';
-// import 'package:connectivity/connectivity.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:path/path.dart';
+import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,17 +20,6 @@ int accentColor = 0xfff1f4ef;
 Future<List<dynamic>> getLocalSpecies() async {
   return await DatabaseHelper.instance.getSpecies();
 }
-
-// Future<void> syncSpeciesData() async {
-//   var connectivityResult = await Connectivity().checkConnectivity();
-
-//   if (connectivityResult == ConnectivityResult.mobile ||
-//       connectivityResult == ConnectivityResult.wifi) {
-//     await fetchAndSaveSpecies();
-//   } else {
-//     List<dynamic> localSpecies = await getLocalSpecies();
-//   }
-// }
 
 Future<void> fetchAndSaveSpecies() async {
   try {
@@ -84,6 +72,12 @@ Future<Map<String, dynamic>> getSharedPrefs() async {
     'ong_id': prefs.getInt('ong_id'),
     'site_id': prefs.getInt('site_id'),
     'user_id': prefs.getInt('id'),
+    'name': prefs.getString('name'),
+    'email': prefs.getString('email'),
+    'contact': prefs.getString('contact'),
+    'role': prefs.getString('role'),
+    'organization': prefs.getString('organization'),
+    'country': prefs.getString('country'),
   };
 }
 

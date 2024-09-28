@@ -3,7 +3,7 @@ import 'package:biodivcenter/helpers/user_service.dart';
 import 'package:biodivcenter/models/_user.dart';
 import 'package:biodivcenter/screens/account.dart';
 import 'package:biodivcenter/screens/base.dart';
-// import 'package:connectivity/connectivity.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
@@ -17,18 +17,36 @@ class _SettingPageState extends State<SettingPage> {
   late Future<User> _user;
   final UserService _userService = UserService();
 
-  // Future<User> fetchUser() async {
-  //   var connectivityResult = await Connectivity().checkConnectivity();
-  //   if (connectivityResult == ConnectivityResult.mobile ||
-  //     connectivityResult == ConnectivityResult.wifi) {
-  //     _user = _userService.fetchUser();
-  //   }
-  // }
+  Future<User> getUser() async {
+  try {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      _user = _userService.fetchUser(); 
+      return _user;
+    } else {
+      Map<String, dynamic> prefs = await getSharedPrefs();
+
+      return User(
+        id: prefs['user_id'],
+        name: prefs['name'],
+        email: prefs['email'],
+        contact: prefs['contact'],
+        role: prefs['role'],
+        ong: prefs['organization'],
+        country: prefs['country'],
+      );
+    }
+  } catch (e) {
+    throw Exception('Failed to fetch user: $e');
+  }
+}
 
   @override
   void initState() {
     super.initState();
-    _user = _userService.fetchUser();
+    getUser();
   }
 
   @override

@@ -5,10 +5,10 @@ import 'package:biodivcenter/screens/alimentation/index.dart';
 import 'package:biodivcenter/screens/animal/index.dart';
 import 'package:biodivcenter/screens/login.dart';
 import 'package:biodivcenter/screens/observation/index.dart';
-// import 'package:biodivcenter/screens/relocation/index.dart';
 import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:biodivcenter/screens/setting.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -136,17 +136,6 @@ class MainDrawer extends StatelessWidget {
               );
             },
           ),
-          // ListTile(
-          //   leading: Icon(Icons.move_down, color: Color(primaryColor)),
-          //   title: const Text('Transfert'),
-          //   onTap: () {
-          //     Navigator.of(context).push(
-          //       MaterialPageRoute(
-          //         builder: (context) => const RelocationPage(),
-          //       ),
-          //     );
-          //   },
-          // ),
           ListTile(
             leading: Icon(Icons.search, color: Color(primaryColor)),
             title: const Text('Observation'),
@@ -175,15 +164,28 @@ class MainDrawer extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: Icon(Icons.account_circle, color: Color(primaryColor)),
-            title: const Text('Compte'),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const AccountPage(),
-                ),
-              );
+          FutureBuilder<bool>(
+            future:
+                _checkInternetConnection(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasData && snapshot.data == true) {
+                return ListTile(
+                  leading:
+                      Icon(Icons.account_circle, color: Color(primaryColor)),
+                  title: const Text('Compte'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AccountPage(),
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return Container();
+              }
             },
           ),
           const SizedBox(height: 20),
@@ -201,5 +203,10 @@ class MainDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<bool> _checkInternetConnection() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
   }
 }
