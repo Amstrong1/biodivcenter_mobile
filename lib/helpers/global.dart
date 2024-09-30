@@ -12,6 +12,16 @@ import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<bool> requestStoragePermission() async {
+  var status = await Permission.storage.status;
+  
+  if (!status.isGranted) {
+    status = await Permission.storage.request();
+  }
+  
+  return status.isGranted;
+}
+
 String apiBaseUrl = "http://192.168.149.162:8000";
 
 int primaryColor = 0xff1e9a2c;

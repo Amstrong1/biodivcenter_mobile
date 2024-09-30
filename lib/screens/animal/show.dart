@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:biodivcenter/components/info_card.dart';
-import 'package:biodivcenter/helpers/database_helper.dart';
-// import 'package:biodivcenter/helpers/global.dart';
-// import 'package:biodivcenter/models/_animal.dart';
 import 'package:biodivcenter/screens/animal/edit.dart';
+import 'package:biodivcenter/screens/animal/reproduction_list.dart';
+import 'package:biodivcenter/screens/animal/sanitary-state-list.dart';
 import 'package:flutter/material.dart';
 
 class AnimalDetailsPage extends StatelessWidget {
@@ -110,15 +109,6 @@ class AnimalDetailsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Section localisation avec la carte
-                  // infoCard(
-                  //   title: "Localisation",
-                  //   content: Image.asset(
-                  //     'assets/images/logo.png', // Remplacer par votre image de carte
-                  //     height: 150,
-                  //     fit: BoxFit.cover,
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: ElevatedButton(
@@ -182,10 +172,24 @@ class AnimalDetailsPage extends StatelessWidget {
             onTap: (index) {
               switch (index) {
                 case 0:
-                  DatabaseHelper.instance.getSanitaryState(animal['id']);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AnimalSanitaryStatePage(
+                        animalId: animal['id'],
+                      ),
+                    ),
+                  );
                   break;
                 case 1:
-                  DatabaseHelper.instance.getReproduction(animal['id']);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AnimalReproductionPage(
+                        animalId: animal['id'],
+                      ),
+                    ),
+                  );
                   break;
               }
             },

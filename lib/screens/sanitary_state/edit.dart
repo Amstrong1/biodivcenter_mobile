@@ -32,7 +32,7 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
 
   Future<void> _getLocalAnimals() async {
     setState(() {
-      _animalsList = DatabaseHelper.instance.getSpecies();
+      _animalsList = DatabaseHelper.instance.getAnimals();
     });
   }
 
@@ -45,8 +45,6 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> sanitaryStateData = {
-        'ong_id': prefs['ong_id'],
-        'site_id': prefs['site_id'],
         'user_id': prefs['user_id'],
         'animal_id': int.parse(_selectedAnimal!),
         'label': _labelController.text,
@@ -56,9 +54,7 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
         'temperature': _temperatureController.text,
         'height': _heightController.text,
         'weight': _weightController.text,
-        'slug': 'reproduction$_selectedAnimal',
         'is_synced': false, // L'animal n'est pas encore synchronisé avec l'API
-        'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       };
       await DatabaseHelper.instance.insertSanitaryState(sanitaryStateData);
@@ -86,7 +82,7 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
     _labelController.text = widget.sanitaryState['label'];
     _descriptionController.text = widget.sanitaryState['description'];
     _correctiveActionController.text =
-        widget.sanitaryState['correctiveAction']!;
+        widget.sanitaryState['corrective_action']!;
     _costController.text = widget.sanitaryState['cost'].toString();
     _temperatureController.text =
         widget.sanitaryState['temperature'].toString();
@@ -96,7 +92,7 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
     _weightController.text = widget.sanitaryState['weight'] != null
         ? widget.sanitaryState['weight'].toString()
         : "";
-    _selectedAnimal = widget.sanitaryState['id'].toString();
+    _selectedAnimal = widget.sanitaryState['animal_id'].toString();
   }
 
   @override

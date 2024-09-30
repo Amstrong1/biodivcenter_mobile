@@ -62,24 +62,6 @@ class CustomListTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // SizedBox(
-          //   width: 50,
-          //   child: TextButton(
-          //     style: ElevatedButton.styleFrom(
-          //       foregroundColor: Color(primaryColor),
-          //       backgroundColor: Color(secondaryColor),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(30.0),
-          //       ),
-          //     ),
-          //     onPressed: onViewPressed,
-          //     child: const Text(
-          //       "Voir",
-          //       style: TextStyle(fontSize: 11),
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(width: 8.0),
           IconButton(
             icon: const Icon(Icons.more_vert),
             onPressed: () {
@@ -118,7 +100,9 @@ class CustomListTile extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: onDeletePressed,
+                onPressed: () {
+                  _showConfirmationDialog(context);
+                },
                 child: const Row(
                   children: <Widget>[
                     Icon(Icons.delete, color: Colors.red),
@@ -132,6 +116,34 @@ class CustomListTile extends StatelessWidget {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmer la suppression'),
+          content:
+              const Text('Etes-vous sûr de vouloir supprimer cet élément ?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirmer'),
+              onPressed: () {
+                onDeletePressed();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );

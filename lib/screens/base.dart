@@ -23,47 +23,58 @@ class BaseScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
+        automaticallyImplyLeading: false,
+        title: Builder(
           builder: (context) {
-            return IconButton(
-              icon: Icon(
-                Icons.menu,
-                color: Color(primaryColor),
-                size: 50,
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Image.asset(
+                      'assets/images/menu.png',
+                      width: 32,
+                      height: 32,
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
+                  FutureBuilder<bool>(
+                    future: checkInternetConnection(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasData && snapshot.data == true) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: IconButton(
+                            icon: Image.asset(
+                              'assets/images/user.png',
+                              width: 36,
+                              height: 36,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const AccountPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
+                ],
               ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
             );
           },
         ),
-        actions: [
-          FutureBuilder<bool>(
-            future: checkInternetConnection(),
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasData && snapshot.data == true) {
-                return IconButton(
-                  icon: const Icon(
-                    Icons.person,
-                    color: Colors.black,
-                    size: 50,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const AccountPage(),
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
-        ],
       ),
       drawer: const MainDrawer(),
       body: Padding(

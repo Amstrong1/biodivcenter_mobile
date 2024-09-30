@@ -36,58 +36,59 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      cursorColor: Color(primaryColor),
-      decoration: InputDecoration(
-        labelText: widget.labelText,
-        labelStyle: const TextStyle(
-          textBaseline: TextBaseline.alphabetic,
-          fontFamily: 'Poppins',
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Color(accentColor),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: TextFormField(
+        controller: widget.controller,
+        cursorColor: Color(primaryColor),
+        decoration: InputDecoration(
+          labelText: widget.labelText,
+          labelStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+          border: const UnderlineInputBorder(borderSide: BorderSide.none),
+          prefixIcon: widget.prefixIcon != null
+              ? Icon(
+                  widget.prefixIcon,
+                  color: Color(primaryColor),
+                )
+              : null,
+          suffixIcon: widget.obscureText
+              ? IconButton(
+                  icon: Icon(
+                    widget.obscureText
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: Color(primaryColor),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_obscureText == null) {
+                        _obscureText = !widget.obscureText;
+                      } else {
+                        _obscureText = !_obscureText!;
+                      }
+                    });
+                  },
+                )
+              : null,
+        ),
+        obscureText: _obscureText ?? widget.obscureText,
+        keyboardType: widget.keyboardType,
+        validator: widget.validator,
+        readOnly: widget.readOnly,
+        onTap: widget.onTap,
+        maxLines: widget.maxLines,
+        enabled: widget.enabled,
+        style: const TextStyle(
           color: Colors.black,
           fontSize: 12,
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        filled: true,
-        fillColor: Color(accentColor),
-        prefixIcon: widget.prefixIcon != null
-            ? Icon(
-                widget.prefixIcon,
-                color: Color(primaryColor),
-              )
-            : null,
-        suffixIcon: widget.obscureText
-            ? IconButton(
-                icon: Icon(
-                  widget.obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: Color(primaryColor),
-                ),
-                onPressed: () {
-                  setState(() {
-                    if (_obscureText == null) {
-                      _obscureText = !widget.obscureText;
-                    } else {
-                      _obscureText = !_obscureText!;
-                    }
-                  });
-                },
-              )
-            : null,
-      ),
-      obscureText: _obscureText ?? widget.obscureText,
-      keyboardType: widget.keyboardType,
-      validator: widget.validator,
-      readOnly: widget.readOnly,
-      onTap: widget.onTap,
-      maxLines: widget.maxLines,
-      enabled: widget.enabled,
-      style: const TextStyle(
-        fontFamily: 'Poppins',
-        color: Colors.black,
-        fontSize: 12,
       ),
     );
   }

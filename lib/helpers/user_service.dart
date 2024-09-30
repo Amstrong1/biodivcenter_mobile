@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/models/_user.dart';
@@ -29,20 +30,32 @@ class UserService {
     required String name,
     required String email,
     required String contact,
+    File? imageFile,
   }) async {
-    final url = Uri.parse(
-      '$apiBaseUrl/api/user/${(await SharedPreferences.getInstance()).getInt('id')}',
-    );
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('id');
 
-    final response = await http.post(
-      url,
-      body: {'name': name, 'email': email, 'contact': contact},
-    );
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
+    if (userId == null) {
       return false;
     }
+
+    final url = Uri.parse('$apiBaseUrl/api/user/$userId');
+
+    final request = http.MultipartRequest('POST', url)
+      ..fields['id'] = userId.toString()
+      ..fields['name'] = name
+      ..fields['email'] = email
+      ..fields['contact'] = contact;
+
+    if (imageFile != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'picture',
+        imageFile.path,
+      ));
+    }
+
+    final response = await request.send();
+
+    return response.statusCode == 200;
   }
 }

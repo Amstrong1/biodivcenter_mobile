@@ -26,7 +26,7 @@ class AlimentationDetailsPage extends StatelessWidget {
                 children: [
                   infoRow('Espece', alimentation['french_name']),
                   const SizedBox(height: 8),
-                  infoRow('Age', alimentation['ageRange'] ?? 'Non défini'),
+                  infoRow('Age', alimentation['age_range']),
                 ],
               ),
             ),

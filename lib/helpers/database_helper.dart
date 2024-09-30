@@ -223,25 +223,25 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getReproduction(int id) async {
-    final db = await instance.database;
-    return (await db.query(
-      'reproductions',
-      where: 'animal_id = ?',
-      whereArgs: [id],
-      orderBy: 'id DESC',
-      limit: 1,
-    ));
-  }
-
   Future<List<Map<String, dynamic>>> getSanitaryState(int id) async {
     final db = await instance.database;
-    return (await db.query(
-      'sanitary_states',
-      where: 'animal_id = ?',
-      whereArgs: [id],
-      orderBy: 'id DESC',
-      limit: 1,
-    ));
+    return (await db.rawQuery('''
+      SELECT sanitary_states.*, animals.name
+      FROM sanitary_states
+      JOIN animals ON sanitary_states.animal_id = animals.id
+      WHERE sanitary_states.animal_id = ?
+      ORDER BY sanitary_states.id DESC
+    ''', [id]));
+  }
+
+  Future<List<Map<String, dynamic>>> getReproduction(int id) async {
+    final db = await instance.database;
+    return (await db.rawQuery('''
+      SELECT reproductions.*, animals.name
+      FROM reproductions
+      JOIN animals ON reproductions.animal_id = animals.id
+      WHERE reproductions.animal_id = ?
+      ORDER BY reproductions.id DESC
+    ''', [id]));
   }
 }

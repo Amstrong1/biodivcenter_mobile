@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/auth_provider.dart';
 import 'package:biodivcenter/helpers/global.dart';
@@ -6,6 +8,7 @@ import 'package:biodivcenter/models/_user.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:biodivcenter/screens/login.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
@@ -30,6 +33,20 @@ class _AccountPageState extends State<AccountPage> {
   bool _isEditing = false;
   bool _isLoading = false;
 
+  File? _selectedImage;
+  final _imagePicker = ImagePicker();
+
+  Future _selectImage() async {
+    await requestPermissions();
+    final pickedImage =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -40,15 +57,18 @@ class _AccountPageState extends State<AccountPage> {
           name: _nameController.text,
           email: _emailController.text,
           contact: _contactController.text,
+          imageFile: _selectedImage,
         );
         setState(() {
           _isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response == true
-                ? 'Informations mises à jour.'
-                : 'Une erreur est survenue.'),
+            content: Text(
+              response == true
+                  ? 'Informations mises à jour.'
+                  : 'Une erreur est survenue.',
+            ),
           ),
         );
         if (response == true) {
@@ -67,6 +87,7 @@ class _AccountPageState extends State<AccountPage> {
             content: Text('Une erreur est survenue.'),
           ),
         );
+        print(e);
       }
     }
   }
@@ -120,73 +141,101 @@ class _AccountPageState extends State<AccountPage> {
                               ),
                             ],
                           ),
-                          _isLoading
-                              ? const CircularProgressIndicator()
-                              : TextButton.icon(
-                                  onPressed: () {
-                                    setState(() {
-                                      _isEditing = !_isEditing;
-                                      if (_isEditing == false) {
-                                        _submitForm();
-                                      }
-                                    });
-                                  },
-                                  icon: Icon(
-                                    _isEditing
-                                        ? Icons.check
-                                        : Icons.edit_outlined,
-                                    color: _isEditing
-                                        ? Color(primaryColor)
-                                        : Colors.amber,
-                                  ),
-                                  label: Text(
-                                    _isEditing ? "Sauvegarder" : "Editer",
-                                    style: TextStyle(
-                                      color: _isEditing
-                                          ? Color(primaryColor)
-                                          : Colors.amber,
-                                      fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              _isLoading
+                                  ? const CircularProgressIndicator()
+                                  : TextButton.icon(
+                                      onPressed: () {
+                                        setState(() {
+                                          _isEditing = !_isEditing;
+                                          if (_isEditing == false) {
+                                            _submitForm();
+                                          }
+                                        });
+                                      },
+                                      label: Text(
+                                        _isEditing ? "Enregistrer" : "Editer",
+                                        style: TextStyle(
+                                          color: _isEditing
+                                              ? Color(primaryColor)
+                                              : Colors.amber,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: _isEditing
+                                            ? Color(secondaryColor)
+                                            : Colors.amber[100],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _isEditing
-                                        ? Color(secondaryColor)
-                                        : Colors.amber[100],
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
+                              if (_isEditing)
+                                Row(
+                                  children: [
+                                    const SizedBox(width: 10),
+                                    TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _isEditing = !_isEditing;
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red[100],
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Annuler",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
+                            ],
+                          ),
                         ],
                       ),
                       const SizedBox(height: 40),
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: user.picture != null
-                              ? DecorationImage(
-                                  image: NetworkImage(
-                                    '$apiBaseUrl/storage/${user.picture}',
-                                  ),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child: user.picture == null
-                            ? Center(
-                                child: Text(
-                                  user.name[0], // Utilisation du snapshot
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(primaryColor),
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
+                      _isEditing
+                          ? _buildImagePicker(user.picture)
+                          : Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: user.picture != null
+                                    ? DecorationImage(
+                                        image: NetworkImage(
+                                          '$apiBaseUrl/storage/${user.picture}',
+                                        ),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : null,
+                              ),
+                              child: user.picture == null
+                                  ? Center(
+                                      child: Text(
+                                        user.name[0], // Utilisation du snapshot
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(primaryColor),
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
                       const SizedBox(height: 20),
                       CustomTextFormField(
                         controller: _nameController..text = user.name,
@@ -254,8 +303,10 @@ class _AccountPageState extends State<AccountPage> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.lock_outline_rounded,
-                                color: Colors.white),
+                            Icon(
+                              Icons.lock_outline_rounded,
+                              color: Colors.white,
+                            ),
                             SizedBox(width: 10),
                             Text(
                               'Modifier le mot de passe',
@@ -309,6 +360,28 @@ class _AccountPageState extends State<AccountPage> {
             }
           },
         ),
+      ),
+    );
+  }
+
+  _buildImagePicker(userPicture) {
+    return GestureDetector(
+      onTap: _selectImage,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey[200],
+          image: DecorationImage(
+            image: _selectedImage != null
+                ? Image.file(_selectedImage!).image
+                : NetworkImage(
+                    '$apiBaseUrl/storage/$userPicture',
+                  ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        width: 100,
+        height: 100,
       ),
     );
   }
