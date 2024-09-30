@@ -3,6 +3,7 @@ import 'package:biodivcenter/components/dropdown_field.dart';
 import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:flutter/material.dart';
 
 class AddReproductionPage extends StatefulWidget {
@@ -76,7 +77,11 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
           content: Text('Reproduction enregistré avec succès !'),
         ),
       );
-      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ReproductionPage(),
+        ),
+      );
     }
   }
 

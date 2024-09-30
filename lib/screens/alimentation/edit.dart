@@ -103,7 +103,7 @@ class _EditAlimentationPageState extends State<EditAlimentationPage> {
     _costController.text = widget.alimentation['cost'].toString();
 
     _selectedSpecie = widget.alimentation['specie_id'].toString();
-    _selectedAge = widget.alimentation['ageRange'];
+    _selectedAge = widget.alimentation['age_range'];
     _selectedPeriod = widget.alimentation['frequency'];
   }
 

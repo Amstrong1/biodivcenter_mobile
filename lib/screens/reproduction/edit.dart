@@ -35,7 +35,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
 
   Future<void> _getLocalAnimals() async {
     setState(() {
-      _animalsList = DatabaseHelper.instance.getSpecies();
+      _animalsList = DatabaseHelper.instance.getAnimals();
     });
   }
 
@@ -44,7 +44,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
     super.initState();
     _getLocalAnimals();
 
-    _litterSizeController.text = widget.reproduction['litterSize'].toString();
+    _litterSizeController.text = widget.reproduction['litter_size'].toString();
     _observationController.text = widget.reproduction['observation'] ?? '';
     _selectedDate = widget.reproduction['date'];
     _selectedPhase = widget.reproduction['phase'];
@@ -169,6 +169,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
                     const SizedBox(height: 20),
                     DatePickerFormField(
                       labelText: 'Date de reproduction',
+                      selectedDate: _selectedDate,
                       onDateSelected: (selectedDate) {
                         setState(() {
                           _selectedDate = selectedDate;
