@@ -39,42 +39,44 @@ class CustomDropdown extends StatelessWidget {
   /// Lorsqu'un item est sélectionn , le paramètre onChanged est appelé avec
   /// l'item sélectionné comme argument.
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Color(accentColor),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+          border: const UnderlineInputBorder(borderSide: BorderSide.none),
+        ),
+        value: selectedItem,
+        items: itemList.isNotEmpty
+            ? itemList.map<DropdownMenuItem<String>>((item) {
+                return DropdownMenuItem<String>(
+                  value: item is String ? item : item['id'].toString(),
+                  child: Text(
+                    item is String
+                        ? item
+                        : item.containsKey('french_name')
+                            ? item['french_name']
+                            : item.containsKey('name')
+                                ? item['name']
+                                : item.toString(),
+                  ),
+                );
+              }).toList()
+            : [], // Assure que les items ne sont pas créés si la liste est vide
+        onChanged: onChanged,
+        validator: validator,
+        style: const TextStyle(
           color: Colors.black,
           fontSize: 12,
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        filled: true,
-        fillColor: Color(accentColor),
-      ),
-      value: selectedItem,
-      items: itemList.isNotEmpty
-          ? itemList.map<DropdownMenuItem<String>>((item) {
-              return DropdownMenuItem<String>(
-                value: item is String ? item : item['id'].toString(),
-                child: Text(
-                  item is String
-                      ? item
-                      : item.containsKey('french_name')
-                          ? item['french_name']
-                          : item.containsKey('name')
-                              ? item['name']
-                              : item.toString(),
-                ),
-              );
-            }).toList()
-          : [], // Assure que les items ne sont pas créés si la liste est vide
-      onChanged: onChanged,
-      validator: validator,
-      style: const TextStyle(
-        color: Colors.black,
-        fontSize: 12,
       ),
     );
   }
