@@ -11,16 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-Future<bool> requestStoragePermission() async {
-  var status = await Permission.storage.status;
-  
-  if (!status.isGranted) {
-    status = await Permission.storage.request();
-  }
-  
-  return status.isGranted;
-}
+import 'package:ulid/ulid.dart';
 
 String apiBaseUrl = "http://192.168.149.162:8000";
 
@@ -43,18 +34,58 @@ Future<void> fetchAndSaveSpecies() async {
       List<Map<String, dynamic>> speciesData = speciesList.map((species) {
         return {
           'id': species['id'],
-          'scientific_name': species['scientific_name'],
           'french_name': species['french_name'],
-          'status_uicn': species['status_uicn'],
-          'status_cites': species['status_cites'],
-          'uicn_link': species['uicn_link'],
-          'inaturalist_link': species['inaturalist_link'],
         };
       }).toList();
 
       // Insérer dans la base de données locale
       for (var specieData in speciesData) {
         await DatabaseHelper.instance.insertSpecies(specieData);
+      }
+    } else {
+      print('Erreur lors de la récupération des données depuis l\'API');
+    }
+  } catch (e) {
+    print('Erreur réseau : $e');
+  }
+}
+
+Future<void> fetchAndSaveAnimals() async {
+  try {
+    Map<String, dynamic> prefs = await getSharedPrefs();
+
+    final response = await http.get(Uri.parse('$apiBaseUrl/api/individus/$prefs["site_id"]'));
+
+    if (response.statusCode == 200) {
+      List animalsList = json.decode(response.body);
+
+      // Préparer les données pour SQLite
+      List<Map<String, dynamic>> animalsData = animalsList.map((animals) {
+        return {
+          'id': Ulid().toString(),
+          'specie_id': animals['specie_id'],
+          'ong_id': animals['ong_id'],
+          'site_id': animals['site_id'],
+          'pen_id': animals['pen_id'],
+          'name': animals['name'],
+          'weight': animals['weight'],
+          'height': animals['height'],
+          'sex': animals['sex'],
+          'birthdate': animals['birthdate'],
+          'description': animals['description'],
+          'photo': animals['photo'],
+          'state': animals['state'],
+          'origin': animals['origin'],
+          'parent_id': animals['parent_id'],
+          'created_at': animals['created_at'],
+          'updated_at': animals['updated_at'],
+          'is_synced': 1,
+        };
+      }).toList();
+
+      // Insérer dans la base de données locale
+      for (var animalData in animalsData) {
+        await DatabaseHelper.instance.insertSpecies(animalData);
       }
     } else {
       print('Erreur lors de la récupération des données depuis l\'API');
@@ -80,9 +111,9 @@ Future<File> saveImageLocally(File image) async {
 Future<Map<String, dynamic>> getSharedPrefs() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return {
-    'ong_id': prefs.getInt('ong_id'),
-    'site_id': prefs.getInt('site_id'),
-    'user_id': prefs.getInt('id'),
+    'ong_id': prefs.getString('ong_id'),
+    'site_id': prefs.getString('site_id'),
+    'user_id': prefs.getString('id'),
     'name': prefs.getString('name'),
     'email': prefs.getString('email'),
     'contact': prefs.getString('contact'),

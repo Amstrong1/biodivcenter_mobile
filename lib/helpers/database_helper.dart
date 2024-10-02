@@ -102,7 +102,7 @@ class DatabaseHelper {
     return await db.query('animals');
   }
 
-  Future<List<Map<String, dynamic>>> getParents(int specieId) async {
+  Future<List<Map<String, dynamic>>> getParents(String specieId) async {
     final db = await instance.database;
     final result = await db.rawQuery('''
         SELECT animals.id, animals.name
@@ -179,7 +179,7 @@ class DatabaseHelper {
         where: 'id = ?', whereArgs: [sanitaryStateData['id']]);
   }
 
-  Future<void> deleteAnimal(int id) async {
+  Future<void> deleteAnimal(String id) async {
     final db = await instance.database;
     final result = await db.query('animals', where: 'id = ?', whereArgs: [id]);
     if (result.isNotEmpty && result.first['is_synced'] == 0) {
@@ -187,7 +187,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> deleteObservation(int id) async {
+  Future<void> deleteObservation(String id) async {
     final db = await instance.database;
     final result =
         await db.query('observations', where: 'id = ?', whereArgs: [id]);
@@ -196,7 +196,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> deleteReproduction(int id) async {
+  Future<void> deleteReproduction(String id) async {
     final db = await instance.database;
     final result =
         await db.query('reproductions', where: 'id = ?', whereArgs: [id]);
@@ -205,7 +205,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> deleteAlimentation(int id) async {
+  Future<void> deleteAlimentation(String id) async {
     final db = await instance.database;
     final result =
         await db.query('alimentations', where: 'id = ?', whereArgs: [id]);
@@ -214,7 +214,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> deleteSanitaryState(int id) async {
+  Future<void> deleteSanitaryState(String id) async {
     final db = await instance.database;
     final result =
         await db.query('sanitary_states', where: 'id = ?', whereArgs: [id]);
@@ -223,7 +223,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getSanitaryState(int id) async {
+  Future<List<Map<String, dynamic>>> getSanitaryState(String id) async {
     final db = await instance.database;
     return (await db.rawQuery('''
       SELECT sanitary_states.*, animals.name
@@ -234,7 +234,7 @@ class DatabaseHelper {
     ''', [id]));
   }
 
-  Future<List<Map<String, dynamic>>> getReproduction(int id) async {
+  Future<List<Map<String, dynamic>>> getReproduction(String id) async {
     final db = await instance.database;
     return (await db.rawQuery('''
       SELECT reproductions.*, animals.name

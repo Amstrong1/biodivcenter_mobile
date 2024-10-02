@@ -9,6 +9,7 @@ import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/animal/index.dart';
+import 'package:ulid/ulid.dart';
 
 class AddAnimalPage extends StatefulWidget {
   const AddAnimalPage({super.key});
@@ -66,22 +67,18 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> animalData = {
+        'id': Ulid().toString(),
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
         'name': _nameController.text,
-        'specie_id': int.parse(_selectedSpecie!),
+        'specie_id': _selectedSpecie!,
         'weight': _weightController.text,
         'height': _heightController.text,
         'sex': _selectedSex!,
         'birthdate': _selectedDate!,
         'description': _descriptionController.text,
         'origin': _originController.text,
-        'slug': _nameController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), ''),
-        'parent_id':
-            _selectedParent != null ? int.parse(_selectedParent!) : null,
+        'parent_id': _selectedParent,
         'is_synced': 0,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
@@ -166,7 +163,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
                         setState(() {
                           _selectedSpecie = value;
                           _parentList = DatabaseHelper.instance.getParents(
-                            int.parse(value!),
+                            value!,
                           );
                         });
                       },

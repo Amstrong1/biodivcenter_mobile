@@ -4,6 +4,7 @@ import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/sanitary_state/index.dart';
 import 'package:flutter/material.dart';
+import 'package:ulid/ulid.dart';
 
 class AddSanitaryState extends StatefulWidget {
   const AddSanitaryState({super.key});
@@ -20,7 +21,6 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
       TextEditingController();
   final TextEditingController _costController = TextEditingController();
   final TextEditingController _temperatureController = TextEditingController();
-  final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
 
   bool _isLoading = false;
@@ -49,18 +49,17 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> sanitaryStateData = {
+        'id': Ulid().toString(),
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
         'user_id': prefs['user_id'],
-        'animal_id': int.parse(_selectedAnimal!),
+        'animal_id': _selectedAnimal!,
         'label': _labelController.text,
         'description': _descriptionController.text,
         'corrective_action': _correctiveActionController.text,
         'cost': _costController.text,
         'temperature': _temperatureController.text,
-        'height': _heightController.text,
         'weight': _weightController.text,
-        'slug': 'reproduction$_selectedAnimal',
         'is_synced': false,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
@@ -166,12 +165,6 @@ class AddSanitaryStatePage extends State<AddSanitaryState> {
                     CustomTextFormField(
                       controller: _costController,
                       labelText: 'Cout(XOF)',
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    CustomTextFormField(
-                      controller: _heightController,
-                      labelText: 'Taille(cm)',
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),

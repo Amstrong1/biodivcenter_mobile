@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class UserService {
   Future<User> fetchUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id');
+    final userId = prefs.getString('id');
 
     if (userId == null) {
       throw Exception('User ID not found in SharedPreferences');
@@ -33,7 +33,7 @@ class UserService {
     File? imageFile,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('id');
+    final userId = prefs.getString('id');
 
     if (userId == null) {
       return false;
@@ -42,7 +42,7 @@ class UserService {
     final url = Uri.parse('$apiBaseUrl/api/user/$userId');
 
     final request = http.MultipartRequest('POST', url)
-      ..fields['id'] = userId.toString()
+      ..fields['id'] = userId
       ..fields['name'] = name
       ..fields['email'] = email
       ..fields['contact'] = contact;

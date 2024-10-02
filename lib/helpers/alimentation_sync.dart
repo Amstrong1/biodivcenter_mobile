@@ -3,7 +3,6 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:http/http.dart' as http;
 
 class AlimentationSyncService {
-
   Future<bool> alimentationApi(Map<String, String> fields) async {
     try {
       var request = http.MultipartRequest(
@@ -47,16 +46,16 @@ class AlimentationSyncService {
     for (var alimentation in alimentations) {
       try {
         Map<String, String> fields = {
-          'ong_id': alimentation['ong_id'].toString(),
-          'site_id': alimentation['site_id'].toString(),
-          'user_id': alimentation['user_id'].toString(),
+          'id': alimentation['id'],
+          'ong_id': alimentation['ong_id'],
+          'site_id': alimentation['site_id'],
+          'user_id': alimentation['user_id'],
           'food': alimentation['food'],
           'age_range': alimentation['age_range'],
           'frequency': alimentation['frequency'],
-          'quantity': alimentation['quantity'],
+          'quantity': alimentation['quantity'].toString(),
           'specie_id': alimentation['specie_id'],
-          'cost': alimentation['cost'],
-          'slug': alimentation['slug'],
+          'cost': alimentation['cost'].toString(),
         };
 
         // Appeler l'API pour synchroniser les données

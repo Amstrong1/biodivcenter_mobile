@@ -72,21 +72,15 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
         'name': _nameController.text,
-        'specie_id': int.parse(_selectedSpecie!),
+        'specie_id': _selectedSpecie!,
         'weight': _weightController.text,
         'height': _heightController.text,
         'sex': _selectedSex!,
         'birthdate': _selectedDate!,
         'description': _descriptionController.text,
         'origin': _originController.text,
-        'slug': _nameController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), ''),
-        'parent_id':
-            _selectedParent != null ? int.parse(_selectedParent!) : null,
+        'parent_id': _selectedParent,
         'is_synced': 0,
-        'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       };
 
@@ -179,7 +173,7 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
                         setState(() {
                           _selectedSpecie = value;
                           _parentList = DatabaseHelper.instance.getParents(
-                            int.parse(value!),
+                            value!,
                           );
                         });
                       },

@@ -5,6 +5,7 @@ import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/reproduction/index.dart';
 import 'package:flutter/material.dart';
+import 'package:ulid/ulid.dart';
 
 class AddReproductionPage extends StatefulWidget {
   const AddReproductionPage({super.key});
@@ -52,15 +53,15 @@ class _AddReproductionPageState extends State<AddReproductionPage> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> reproductionData = {
+        'id': Ulid().toString(),
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
         'user_id': prefs['user_id'],
-        'animal_id': int.parse(_selectedAnimal!),
+        'animal_id': _selectedAnimal!,
         'phase': _selectedPhase!,
         'litter_size': _litterSizeController.text,
         'date': _selectedDate!,
         'observation': _observationController.text,
-        'slug': 'reproduction$_selectedAnimal',
         'is_synced': false,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),

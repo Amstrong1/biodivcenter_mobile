@@ -57,20 +57,26 @@ class CustomDropdown extends StatelessWidget {
         value: selectedItem,
         items: itemList.isNotEmpty
             ? itemList.map<DropdownMenuItem<String>>((item) {
+                String avValue;
+                String displayName;
+
+                if (item is Map) {
+                  avValue = item['id'].toString();
+                  displayName = item['french_name'] ?? item['name'];
+                } else if (item is String) {
+                  avValue = item;
+                  displayName = item;
+                } else {
+                  avValue = item.toString();
+                  displayName = item.toString();
+                }
+
                 return DropdownMenuItem<String>(
-                  value: item is String ? item : item['id'].toString(),
-                  child: Text(
-                    item is String
-                        ? item
-                        : item.containsKey('french_name')
-                            ? item['french_name']
-                            : item.containsKey('name')
-                                ? item['name']
-                                : item.toString(),
-                  ),
+                  value: avValue,
+                  child: Text(displayName),
                 );
               }).toList()
-            : [], // Assure que les items ne sont pas créés si la liste est vide
+            : [],
         onChanged: onChanged,
         validator: validator,
         style: const TextStyle(

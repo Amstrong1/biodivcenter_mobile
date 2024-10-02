@@ -61,11 +61,11 @@ class ObservationSyncService {
     for (var observation in observations) {
       try {
         Map<String, String> fields = {
-          'ong_id': observation['ong_id'].toString(),
-          'site_id': observation['site_id'].toString(),
+          'id': observation['id'],
+          'ong_id': observation['ong_id'],
+          'site_id': observation['site_id'],
           'subject': observation['subject'],
           'observation': observation['observation'],
-          'slug': observation['slug'],
         };
 
         // Récupérer la photo (si elle existe)

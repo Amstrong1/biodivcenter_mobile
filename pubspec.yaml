@@ -43,6 +43,7 @@ dependencies:
   connectivity: ^3.0.6
   path_provider: ^2.1.4
   permission_handler: ^10.2.0
+  ulid: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -6,6 +6,7 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/observation/index.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ulid/ulid.dart';
 
 class AddObservationPage extends StatefulWidget {
   const AddObservationPage({super.key});
@@ -33,16 +34,13 @@ class _AddObservationPageState extends State<AddObservationPage> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> observationData = {
+        'id': Ulid().toString(),
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
         'subject': _subjectController.text,
         'observation': _observationController.text,
         'photo': _selectedImage?.path,
-        'slug': _subjectController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), ''),
-        'is_synced': false, // L'animal n'est pas encore synchronisé avec l'API
+        'is_synced': false,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       };

@@ -6,7 +6,6 @@ import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
 class AnimalSyncService {
-
   Future<bool> animalApi(Map<String, String> fields, File? imageFile) async {
     try {
       var request = http.MultipartRequest(
@@ -61,10 +60,11 @@ class AnimalSyncService {
     for (var animal in animals) {
       try {
         Map<String, String> fields = {
-          'specie_id': animal['specie_id'].toString(),
-          'ong_id': animal['ong_id'].toString(),
-          'site_id': animal['site_id'].toString(),
-          'pen_id': animal['pen_id']?.toString() ?? '',
+          'id': animal['id'],
+          'specie_id': animal['specie_id'],
+          'ong_id': animal['ong_id'],
+          'site_id': animal['site_id'],
+          'pen_id': animal['pen_id'] ?? '',
           'name': animal['name'],
           'weight': animal['weight'],
           'height': animal['height'],
@@ -73,8 +73,7 @@ class AnimalSyncService {
           'description': animal['description'],
           'state': animal['state'],
           'origin': animal['origin'] ?? '',
-          'parent_id': animal['parent_id']?.toString() ?? '',
-          'slug': animal['slug'],
+          'parent_id': animal['parent_id'] ?? '',
         };
 
         // Récupérer la photo (si elle existe)

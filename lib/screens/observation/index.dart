@@ -155,7 +155,7 @@ class _ObservationPageState extends State<ObservationPage> {
     );
   }
 
-  void deleteResource(int id) async {
+  void deleteResource(String id) async {
     try {
       await DatabaseHelper.instance.deleteObservation(id);
       ScaffoldMessenger.of(context).showSnackBar(

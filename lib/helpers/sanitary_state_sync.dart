@@ -3,7 +3,6 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:http/http.dart' as http;
 
 class SanitaryStateSyncService {
-
   Future<bool> sanitaryStateApi(Map<String, String> fields) async {
     try {
       var request = http.MultipartRequest(
@@ -21,7 +20,7 @@ class SanitaryStateSyncService {
       var response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Synchronisation réussie pour l\'sanitaryState');
+        print('Synchronisation réussie pour l\'etat sanitaire');
         return true;
       } else {
         print('Erreur lors de la synchronisation : ${response.statusCode}');
@@ -41,24 +40,33 @@ class SanitaryStateSyncService {
       whereArgs: [0],
     );
 
+    print(sanitaryStates);
+
     // bool allSyncSuccessful = true;
 
     // Boucler sur chaque enregistrement pour le synchroniser
     for (var sanitaryState in sanitaryStates) {
       try {
         Map<String, String> fields = {
-          'ong_id': sanitaryState['ong_id'].toString(),
-          'site_id': sanitaryState['site_id'].toString(),
-          'user_id': sanitaryState['user_id'].toString(),
+          'id': sanitaryState['id'],
+          'ong_id': sanitaryState['ong_id'],
+          'site_id': sanitaryState['site_id'],
+          'user_id': sanitaryState['user_id'],
           'animal_id': sanitaryState['animal_id'],
           'label': sanitaryState['label'],
           'description': sanitaryState['description'],
-          'corrective_action': sanitaryState['corrective_action'],
-          'cost': sanitaryState['cost'],
-          'temperature': sanitaryState['temperature'],
-          'height': sanitaryState['height'],
-          'weight': sanitaryState['weight'],
-          'slug': sanitaryState['slug'],
+          'corrective_action': sanitaryState['corrective_action'] != ""
+              ? sanitaryState['corrective_action']
+              : 'Non défini',
+          'cost': sanitaryState['cost'] != ""
+              ? sanitaryState['cost'].toString()
+              : '0',
+          'temperature': sanitaryState['temperature'] != ""
+              ? sanitaryState['temperature'].toString()
+              : '0',
+          'weight': sanitaryState['weight'] != ""
+              ? sanitaryState['weight'].toString()
+              : '0',
         };
 
         // Appeler l'API pour synchroniser les données
@@ -66,7 +74,7 @@ class SanitaryStateSyncService {
 
         if (success) {
           await db.update(
-            'sanitaryStates',
+            'sanitary_states',
             {'is_synced': 1},
             where: 'id = ?',
             whereArgs: [sanitaryState['id']],
@@ -76,7 +84,7 @@ class SanitaryStateSyncService {
         }
       } catch (e) {
         print(
-          'Erreur lors de la synchronisation de l\'sanitaryState ${sanitaryState['id']}: $e',
+          'Erreur lors de la synchronisation de l\'etat sanitaire ${sanitaryState['id']}: $e',
         );
         // allSyncSuccessful = false; // Marquer comme ayant échoué
       }

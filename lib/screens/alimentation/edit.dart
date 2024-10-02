@@ -66,13 +66,8 @@ class _EditAlimentationPageState extends State<EditAlimentationPage> {
         'frequency': _selectedPeriod!,
         'quantity': _quantityController.text,
         'cost': _costController.text,
-        'specie_id': int.parse(_selectedSpecie!),
-        'slug': _foodController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), ''),
-        'is_synced': false,
-        'created_at': DateTime.now().toIso8601String(),
+        'specie_id': _selectedSpecie!,
+        'is_synced': 0,
         'updated_at': DateTime.now().toIso8601String(),
       };
 

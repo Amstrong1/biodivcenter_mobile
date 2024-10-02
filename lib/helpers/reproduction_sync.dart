@@ -3,7 +3,6 @@ import 'package:biodivcenter/helpers/global.dart';
 import 'package:http/http.dart' as http;
 
 class ReproductionSyncService {
-
   Future<bool> reproductionApi(Map<String, String> fields) async {
     try {
       var request = http.MultipartRequest(
@@ -21,7 +20,7 @@ class ReproductionSyncService {
       var response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Synchronisation réussie pour l\'reproduction');
+        print('Synchronisation réussie pour la reproduction');
         return true;
       } else {
         print('Erreur lors de la synchronisation : ${response.statusCode}');
@@ -47,15 +46,15 @@ class ReproductionSyncService {
     for (var reproduction in reproductions) {
       try {
         Map<String, String> fields = {
-          'ong_id': reproduction['ong_id'].toString(),
-          'site_id': reproduction['site_id'].toString(),
-          'user_id': reproduction['user_id'].toString(),
+          'id': reproduction['id'],
+          'ong_id': reproduction['ong_id'],
+          'site_id': reproduction['site_id'],
+          'user_id': reproduction['user_id'],
           'animal_id': reproduction['animal_id'],
           'phase': reproduction['phase'],
-          'litter_size': reproduction['litter_size'],
+          'litter_size': reproduction['litter_size'].toString(),
           'date': reproduction['date'],
           'observation': reproduction['observation'],
-          'slug': reproduction['slug'],
         };
 
         // Appeler l'API pour synchroniser les données

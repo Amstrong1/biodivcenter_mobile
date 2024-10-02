@@ -41,12 +41,7 @@ class _EditObservationPageState extends State<EditObservationPage> {
         'subject': _subjectController.text,
         'observation': _observationController.text,
         'photo': _selectedImage?.path,
-        'slug': _subjectController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), ''),
-        'is_synced': false,
-        'created_at': DateTime.now().toIso8601String(),
+        'is_synced': 0,
         'updated_at': DateTime.now().toIso8601String(),
       };
 

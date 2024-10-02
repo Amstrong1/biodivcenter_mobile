@@ -20,9 +20,9 @@ class AuthService {
       // Stockage des informations utilisateur
       await prefs.setString('token', data['access_token']);
       await prefs.setString('tokenType', data['token_type']);
-      await prefs.setInt('id', data['user']['id']);
-      await prefs.setInt('ong_id', data['user']['ong_id']);
-      await prefs.setInt('site_id', data['user']['site_id']);
+      await prefs.setString('id', data['user']['id'].toString());
+      await prefs.setString('ong_id', data['user']['ong_id']);
+      await prefs.setString('site_id', data['user']['site_id']);
       await prefs.setString('name', data['user']['name']);
       await prefs.setString('email', data['user']['email']);
       await prefs.setString('role', data['user']['role_label']);
@@ -30,8 +30,8 @@ class AuthService {
       await prefs.setString('organization', data['user']['organization']);
       await prefs.setString('country', data['user']['country']);
 
-
       await fetchAndSaveSpecies();
+      await fetchAndSaveAnimals();
 
       return true;
     } else {
@@ -47,7 +47,7 @@ class AuthService {
   Future<Map<String, dynamic>?> getUserData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    final id = prefs.getInt('id');
+    final id = prefs.getString('id');
     final name = prefs.getString('name');
 
     if (token != null && id != null && name != null) {

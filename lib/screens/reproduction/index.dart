@@ -153,7 +153,7 @@ class _ReproductionPageState extends State<ReproductionPage> {
     );
   }
 
-  void deleteResource(int id) async {
+  void deleteResource(String id) async {
     try {
       await DatabaseHelper.instance.deleteReproduction(id);
       ScaffoldMessenger.of(context).showSnackBar(

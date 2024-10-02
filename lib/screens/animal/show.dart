@@ -80,7 +80,10 @@ class AnimalDetailsPage extends StatelessWidget {
                       children: [
                         infoRow('Sexe', animal['sex']),
                         infoRow('Date de naissance', animal['birthdate']),
-                        infoRow("Date d'enregistrement", animal['created_at']),
+                        infoRow(
+                          "Date d'enregistrement",
+                          animal['created_at'].split('T')[0],
+                        ),
                         infoRow("Poids", '${animal['weight']} kg'),
                         infoRow("Taille", '${animal['height']} cm'),
                       ],

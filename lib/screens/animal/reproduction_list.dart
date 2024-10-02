@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class AnimalReproductionPage extends StatefulWidget {
   const AnimalReproductionPage({super.key, required this.animalId});
 
-  final int animalId;
+  final String animalId;
 
   @override
   _ReproductionPageState createState() => _ReproductionPageState();
@@ -136,7 +136,7 @@ class _ReproductionPageState extends State<AnimalReproductionPage> {
     );
   }
 
-  void deleteResource(int id) async {
+  void deleteResource(String id) async {
     try {
       await DatabaseHelper.instance.deleteReproduction(id);
       ScaffoldMessenger.of(context).showSnackBar(

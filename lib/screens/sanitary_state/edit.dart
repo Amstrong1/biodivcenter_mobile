@@ -45,8 +45,11 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> sanitaryStateData = {
+        'id': widget.sanitaryState['id'],
+        'ong_id': prefs['ong_id'],
+        'site_id': prefs['site_id'],
         'user_id': prefs['user_id'],
-        'animal_id': int.parse(_selectedAnimal!),
+        'animal_id': _selectedAnimal!,
         'label': _labelController.text,
         'description': _descriptionController.text,
         'corrective_action': _correctiveActionController.text,
@@ -54,7 +57,7 @@ class EditSanitaryStatePage extends State<EditSanitaryState> {
         'temperature': _temperatureController.text,
         'height': _heightController.text,
         'weight': _weightController.text,
-        'is_synced': false, // L'animal n'est pas encore synchronisé avec l'API
+        'is_synced': 0,
         'updated_at': DateTime.now().toIso8601String(),
       };
       await DatabaseHelper.instance.insertSanitaryState(sanitaryStateData);

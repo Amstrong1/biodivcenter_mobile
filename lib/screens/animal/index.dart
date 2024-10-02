@@ -152,7 +152,7 @@ class _AnimalPageState extends State<AnimalPage> {
     );
   }
 
-  Future<void> deleteResource(int id) async {
+  Future<void> deleteResource(String id) async {
     try {
       await DatabaseHelper.instance.deleteAnimal(id);
       ScaffoldMessenger.of(context).showSnackBar(

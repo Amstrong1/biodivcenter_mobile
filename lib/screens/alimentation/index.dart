@@ -151,7 +151,7 @@ class _AlimentationPageState extends State<AlimentationPage> {
     );
   }
 
-  void deleteResource(int id) async {
+  void deleteResource(String id) async {
     try {
       await DatabaseHelper.instance.deleteAlimentation(id);
 

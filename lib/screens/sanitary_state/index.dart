@@ -152,7 +152,7 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
     );
   }
 
-  void deleteResource(int id) async {
+  void deleteResource(String id) async {
     try {
       await DatabaseHelper.instance.deleteSanitaryState(id);
       ScaffoldMessenger.of(context).showSnackBar(

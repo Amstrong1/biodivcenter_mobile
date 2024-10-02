@@ -4,6 +4,7 @@ import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/alimentation/index.dart';
 import 'package:flutter/material.dart';
+import 'package:ulid/ulid.dart';
 
 class AddAlimentationPage extends StatefulWidget {
   const AddAlimentationPage({super.key});
@@ -55,6 +56,7 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
       Map<String, dynamic> prefs = await getSharedPrefs();
 
       Map<String, dynamic> alimentationData = {
+        'id': Ulid().toString(),
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
         'user_id': prefs['user_id'],
@@ -63,11 +65,7 @@ class _AddAlimentationPageState extends State<AddAlimentationPage> {
         'frequency': _selectedPeriod!,
         'quantity': _quantityController.text,
         'cost': _costController.text,
-        'specie_id': int.parse(_selectedSpecie!),
-        'slug': _foodController.text
-            .toLowerCase()
-            .replaceAll(RegExp(r'\s'), '-')
-            .replaceAll(RegExp(r'[^\w-]'), ''),
+        'specie_id': _selectedSpecie!,
         'is_synced': false,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
