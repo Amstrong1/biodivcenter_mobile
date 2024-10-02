@@ -64,7 +64,6 @@ class AnimalSyncService {
           'specie_id': animal['specie_id'],
           'ong_id': animal['ong_id'],
           'site_id': animal['site_id'],
-          'pen_id': animal['pen_id'] ?? '',
           'name': animal['name'],
           'weight': animal['weight'],
           'height': animal['height'],

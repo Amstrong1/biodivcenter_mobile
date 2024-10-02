@@ -1,14 +1,19 @@
 import 'package:biodivcenter/helpers/auth_provider.dart';
 import 'package:biodivcenter/helpers/database_helper.dart';
-// import 'package:biodivcenter/helpers/global.dart';
+import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  // await requestStoragePermission();
-
   WidgetsFlutterBinding.ensureInitialized();
+  
+  Map<String, dynamic> prefs = await getSharedPrefs();
+
+  if (prefs['user_id'] == null) {
+      await requestPermissions();    
+  }
+
   await DatabaseHelper.instance.database;
   runApp(const MyApp());
 }

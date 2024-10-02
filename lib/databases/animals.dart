@@ -8,7 +8,6 @@ class AnimalsTable {
         specie_id TEXT NOT NULL,
         ong_id TEXT NOT NULL,
         site_id TEXT NOT NULL,
-        pen_id TEXT,
         name TEXT NOT NULL,
         weight TEXT NOT NULL,
         height TEXT NOT NULL,
