@@ -344,10 +344,12 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
         color: Colors.grey[200],
         child: _selectedImage != null
             ? Image.file(_selectedImage!, fit: BoxFit.cover)
-            : Image.file(
-                File(widget.animal['photo'].toString()),
-                fit: BoxFit.cover,
-              ),
+            : widget.animal['photo']
+                ? Image.file(
+                    File(widget.animal['photo'].toString()),
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.add_a_photo, size: 50),
       ),
     );
   }

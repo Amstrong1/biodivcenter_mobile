@@ -3,9 +3,8 @@ library biodivcenter.helpers.global;
 import 'dart:io';
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
-import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:biodivcenter/helpers/database_helper.dart';
@@ -58,10 +57,14 @@ Future<void> fetchAndSaveSpecies() async {
         await DatabaseHelper.instance.insertSpecies(specieData);
       }
     } else {
-      print('Erreur lors de la récupération des données depuis l\'API');
+      if (kDebugMode) {
+        print('Erreur lors de la récupération des données depuis l\'API');
+      }
     }
   } catch (e) {
-    print('Erreur réseau : $e');
+    if (kDebugMode) {
+      print('Erreur réseau : $e');
+    }
   }
 }
 
@@ -75,7 +78,6 @@ Future<void> fetchAndSaveAnimals() async {
 
     if (response.statusCode == 200) {
       List animalsList = json.decode(response.body);
-      print(animalsList);
 
       // Préparer les données pour SQLite
       List<Map<String, dynamic>> animalsData = animalsList.map((animals) {
@@ -93,6 +95,7 @@ Future<void> fetchAndSaveAnimals() async {
           'state': animals['state'],
           'origin': animals['origin'],
           'parent_id': animals['parent_id'],
+          'photo': animals['photo'],
           'created_at': animals['created_at'],
           'updated_at': animals['updated_at'],
           'is_synced': 1,
@@ -101,13 +104,21 @@ Future<void> fetchAndSaveAnimals() async {
 
       // Insérer dans la base de données locale
       for (var animalData in animalsData) {
+        if (animalData['photo'] != null) {
+          File savedImage = await saveImageLocally(animalData['photo']!);
+          animalData = {...animalData, 'photo': savedImage.path};
+        }
         await DatabaseHelper.instance.insertAnimal(animalData);
       }
     } else {
-      print('Erreur lors de la récupération des données depuis l\'API');
+      if (kDebugMode) {
+        print('Erreur lors de la récupération des données depuis l\'API');
+      }
     }
   } catch (e) {
-    print('Erreur réseau : $e');
+    if (kDebugMode) {
+      print('Erreur réseau : $e');
+    }
   }
 }
 
@@ -122,20 +133,6 @@ Future<File> saveImageLocally(File image) async {
   final directory = await getApplicationDocumentsDirectory();
   final imagePath = join(directory.path, basename(image.path));
   return File(image.path).copy(imagePath);
-}
-
-buildImagePicker(selectImage, selectedImage) {
-  return GestureDetector(
-    onTap: selectImage,
-    child: Container(
-      width: 100,
-      height: 100,
-      color: Colors.grey[200],
-      child: selectedImage != null
-          ? Image.file(selectedImage!, fit: BoxFit.cover)
-          : const Icon(Icons.add_a_photo, size: 50),
-    ),
-  );
 }
 
 Future<bool> checkInternetConnection() async {

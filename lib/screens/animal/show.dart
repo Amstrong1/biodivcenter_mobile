@@ -23,10 +23,12 @@ class AnimalDetailsPage extends StatelessWidget {
                 width: double.infinity,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: Image.file(
-                    File(animal['photo'].toString()),
-                    fit: BoxFit.cover,
-                  ),
+                  child: animal['photo'] != null
+                      ? Image.file(
+                          File(animal['photo'].toString()),
+                          fit: BoxFit.cover,
+                        )
+                      : const Icon(Icons.add_a_photo, size: 50),
                 ),
               ),
               Positioned(

@@ -1,5 +1,6 @@
 import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class AlimentationSyncService {
@@ -20,14 +21,20 @@ class AlimentationSyncService {
       var response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Synchronisation réussie pour l\'alimentation');
+        if (kDebugMode) {
+          print('Synchronisation réussie pour l\'alimentation');
+        }
         return true;
       } else {
-        print('Erreur lors de la synchronisation : ${response.statusCode}');
+        if (kDebugMode) {
+          print('Erreur lors de la synchronisation : ${response.statusCode}');
+        }
         return false;
       }
     } catch (e) {
-      print('Exception lors de l\'envoi à l\'API: $e');
+      if (kDebugMode) {
+        print('Exception lors de l\'envoi à l\'API: $e');
+      }
       return false;
     }
   }
@@ -72,9 +79,11 @@ class AlimentationSyncService {
           // allSyncSuccessful = false; // Marquer comme ayant échoué
         }
       } catch (e) {
-        print(
+        if (kDebugMode) {
+          print(
           'Erreur lors de la synchronisation de l\'alimentation ${alimentation['id']}: $e',
         );
+        }
         // allSyncSuccessful = false; // Marquer comme ayant échoué
       }
     }

@@ -78,6 +78,46 @@ class _AddObservationPageState extends State<AddObservationPage> {
     }
   }
 
+  Future<void> _takePhoto() async {
+    final pickedImage =
+        await _imagePicker.pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void _showImageSourceSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Prendre une photo'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _takePhoto();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choisir dans la galerie'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _selectImage();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +160,17 @@ class _AddObservationPageState extends State<AddObservationPage> {
                 const SizedBox(height: 20),
                 const Text('Image :'),
                 const SizedBox(height: 10),
-                buildImagePicker(_selectImage, _selectedImage),
+                GestureDetector(
+                  onTap: () => _showImageSourceSelector(context),
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    color: Colors.grey[200],
+                    child: _selectedImage != null
+                        ? Image.file(_selectedImage!, fit: BoxFit.cover)
+                        : const Icon(Icons.add_a_photo, size: 50),
+                  ),
+                ),
                 const SizedBox(height: 40),
                 _isLoading
                     ? const CircularProgressIndicator()

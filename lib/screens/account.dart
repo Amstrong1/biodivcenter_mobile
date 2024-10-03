@@ -47,7 +47,47 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  Future<void> _submitForm() async {
+  Future<void> _takePhoto() async {
+    final pickedImage =
+        await _imagePicker.pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void _showImageSourceSelector(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Prendre une photo'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _takePhoto();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choisir dans la galerie'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _selectImage();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _submitForm(context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -87,7 +127,6 @@ class _AccountPageState extends State<AccountPage> {
             content: Text('Une erreur est survenue.'),
           ),
         );
-        print(e);
       }
     }
   }
@@ -150,7 +189,7 @@ class _AccountPageState extends State<AccountPage> {
                                         setState(() {
                                           _isEditing = !_isEditing;
                                           if (_isEditing == false) {
-                                            _submitForm();
+                                            _submitForm(context);
                                           }
                                         });
                                       },
@@ -226,7 +265,7 @@ class _AccountPageState extends State<AccountPage> {
                               child: user.picture == null
                                   ? Center(
                                       child: Text(
-                                        user.name[0], // Utilisation du snapshot
+                                        user.name[0],
                                         style: TextStyle(
                                           fontSize: 30,
                                           fontWeight: FontWeight.bold,
@@ -366,7 +405,7 @@ class _AccountPageState extends State<AccountPage> {
 
   _buildImagePicker(userPicture) {
     return GestureDetector(
-      onTap: _selectImage,
+      onTap: () => _showImageSourceSelector(context),
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,

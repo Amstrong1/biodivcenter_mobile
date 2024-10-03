@@ -79,6 +79,14 @@ class _EditObservationPageState extends State<EditObservationPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _subjectController.text = widget.observation['subject'];
+    _observationController.text = widget.observation['observation'];
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -93,6 +101,7 @@ class _EditObservationPageState extends State<EditObservationPage> {
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomTextFormField(
                   controller: _subjectController,
@@ -132,7 +141,7 @@ class _EditObservationPageState extends State<EditObservationPage> {
                                 '$apiBaseUrl/storage/${widget.observation['photo']!}',
                                 fit: BoxFit.cover,
                               )
-                            : Container(),
+                            : const Icon(Icons.add_a_photo, size: 50),
                   ),
                 ),
                 const SizedBox(height: 40),

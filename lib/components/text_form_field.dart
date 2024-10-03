@@ -46,10 +46,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         controller: widget.controller,
         cursorColor: Color(primaryColor),
         decoration: InputDecoration(
+          floatingLabelBehavior: FloatingLabelBehavior.always,
           labelText: widget.labelText,
           labelStyle: const TextStyle(
             color: Colors.black,
-            fontSize: 12,
+            fontSize: 13,
           ),
           border: const UnderlineInputBorder(borderSide: BorderSide.none),
           prefixIcon: widget.prefixIcon != null

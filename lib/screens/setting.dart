@@ -6,8 +6,10 @@ import 'package:biodivcenter/helpers/reproduction_sync.dart';
 import 'package:biodivcenter/helpers/sanitary_state_sync.dart';
 import 'package:biodivcenter/helpers/user_service.dart';
 import 'package:biodivcenter/models/_user.dart';
+import 'package:biodivcenter/screens/about.dart';
 import 'package:biodivcenter/screens/account.dart';
 import 'package:biodivcenter/screens/base.dart';
+import 'package:biodivcenter/screens/feedback.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
@@ -188,7 +190,7 @@ class _SettingPageState extends State<SettingPage> {
                           const SizedBox(height: 10),
                           link(
                             context,
-                            null,
+                            const FeedbackPage(),
                             Icons.chat_outlined,
                             'Feedback',
                             'Faites nous vos feedback ici',
@@ -196,7 +198,7 @@ class _SettingPageState extends State<SettingPage> {
                           const SizedBox(height: 10),
                           link(
                             context,
-                            null,
+                            const AboutPage(),
                             Icons.info_outline,
                             'A propos',
                             'Règle de confidentialité',

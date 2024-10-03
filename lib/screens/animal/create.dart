@@ -30,19 +30,18 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
   bool _isLoading = false;
 
   String? _selectedSpecie;
-  late Future<List<dynamic>> _speciesList;
-
   String? _selectedParent;
-  late Future<List<dynamic>> _parentList = Future.value([]);
-
   String? _selectedSex;
+  String? _fileError;
+
+  late Future<List<dynamic>> _speciesList;
   final List<String> _sexOptions = ['Mâle', 'Femelle'];
+  late Future<List<dynamic>> _parentList = Future.value([]);
 
   File? _selectedImage;
   final _imagePicker = ImagePicker();
 
   Future _selectImage() async {
-    await requestPermissions();
     final pickedImage =
         await _imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
@@ -50,6 +49,46 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         _selectedImage = File(pickedImage.path);
       });
     }
+  }
+
+  Future<void> _takePhoto() async {
+    final pickedImage =
+        await _imagePicker.pickImage(source: ImageSource.camera);
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  void _showImageSourceSelector(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Prendre une photo'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _takePhoto();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choisir dans la galerie'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _selectImage();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _getLocalSpecies() async {
@@ -64,40 +103,45 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
         _isLoading = true;
       });
 
-      Map<String, dynamic> prefs = await getSharedPrefs();
-
-      Map<String, dynamic> animalData = {
-        'id': Ulid().toString(),
-        'ong_id': prefs['ong_id'],
-        'site_id': prefs['site_id'],
-        'name': _nameController.text,
-        'specie_id': _selectedSpecie!,
-        'weight': _weightController.text,
-        'height': _heightController.text,
-        'sex': _selectedSex!,
-        'birthdate': _selectedDate!,
-        'description': _descriptionController.text,
-        'origin': _originController.text,
-        'parent_id': _selectedParent,
-        'is_synced': 0,
-        'created_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
-      };
-
       if (_selectedImage != null) {
+        Map<String, dynamic> prefs = await getSharedPrefs();
+
+        Map<String, dynamic> animalData = {
+          'id': Ulid().toString(),
+          'ong_id': prefs['ong_id'],
+          'site_id': prefs['site_id'],
+          'name': _nameController.text,
+          'specie_id': _selectedSpecie!,
+          'weight': _weightController.text,
+          'height': _heightController.text,
+          'sex': _selectedSex!,
+          'birthdate': _selectedDate!,
+          'description': _descriptionController.text,
+          'origin': _originController.text,
+          'parent_id': _selectedParent,
+          'is_synced': 0,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        };
+
         File savedImage = await saveImageLocally(_selectedImage!);
         animalData = {...animalData, 'photo': savedImage.path};
+
+        await DatabaseHelper.instance.insertAnimal(animalData);
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const AnimalPage()),
+        );
+      } else {
+        setState(() {
+          _fileError = 'Sélectionner une image';
+          _isLoading = false;
+        });
       }
-
-      await DatabaseHelper.instance.insertAnimal(animalData);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const AnimalPage()),
-      );
     }
   }
 
@@ -214,6 +258,12 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
                           _selectedSex = value;
                         });
                       },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez choisir le sexe';
+                        }
+                        return null;
+                      },
                       label: 'Sexe',
                     ),
                     const SizedBox(height: 20),
@@ -256,11 +306,14 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
                               borderRadius: BorderRadius.circular(10),
                               color: Color(accentColor),
                             ),
-                            padding: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 18.0,
+                              horizontal: 12,
+                            ),
                             child: const Text(
                               'Aucun parent trouvé',
                               style: TextStyle(
-                                fontSize: 12.0,
+                                fontSize: 10.0,
                               ),
                             ),
                           );
@@ -295,7 +348,24 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
                     const SizedBox(height: 20),
                     const Text('Photo de l\'animal :'),
                     const SizedBox(height: 10),
-                    buildImagePicker(_selectImage, _selectedImage),
+                    GestureDetector(
+                      onTap: () => _showImageSourceSelector(context),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: _selectedImage != null
+                            ? Image.file(_selectedImage!, fit: BoxFit.cover)
+                            : const Icon(Icons.add_a_photo, size: 50),
+                      ),
+                    ),
+                    Text(
+                      _fileError ?? '',
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                      ),
+                    ),
                     const SizedBox(height: 40),
                     _isLoading
                         ? const CircularProgressIndicator()
