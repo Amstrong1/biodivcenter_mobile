@@ -2,6 +2,8 @@ import 'package:biodivcenter/components/text_form_field.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:biodivcenter/screens/base.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:ulid/ulid.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -12,6 +14,8 @@ class FeedbackPage extends StatefulWidget {
 
 class _FeedbackPageState extends State<FeedbackPage> {
   final TextEditingController _textEditingController = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -89,21 +93,24 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       labelText: 'Écrivez ici...',
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(primaryColor),
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      onPressed: () {},
-                      child: const Text(
-                        'Envoyer',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(primaryColor),
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              minimumSize: const Size(double.infinity, 50),
+                            ),
+                            onPressed: () => _submitFeedback(context),
+                            child: const Text(
+                              'Envoyer',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -112,5 +119,57 @@ class _FeedbackPageState extends State<FeedbackPage> {
         ),
       ),
     );
+  }
+
+  void _submitFeedback(context) async {
+    if (_textEditingController.text.isNotEmpty) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        var request = http.MultipartRequest(
+          'POST',
+          Uri.parse(
+            '$apiBaseUrl/api/feedback',
+          ),
+        );
+        Map<String, dynamic> prefs = await getSharedPrefs();
+
+        request.fields['id'] = Ulid().toString();
+        request.fields['user_id'] = prefs['user_id'];
+        request.fields['content'] = _textEditingController.text;
+
+        var response = await request.send();
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Message envoyé'),
+              backgroundColor: Color(primaryColor),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Erreur lors de l\'enregistrement : ${response.statusCode}',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur lors de l\'envoi à l\'API: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 }

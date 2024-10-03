@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,19 +36,25 @@ class AnimalSyncService {
       var response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Synchronisation réussie pour l\'animal');
+        if (kDebugMode) {
+          print('Synchronisation réussie pour l\'animal');
+        }
         return true;
       } else {
-        print('Erreur lors de la synchronisation : ${response.statusCode}');
+        if (kDebugMode) {
+          print('Erreur lors de la synchronisation : ${response.statusCode}');
+        }
         return false;
       }
     } catch (e) {
-      print('Exception lors de l\'envoi à l\'API: $e');
+      if (kDebugMode) {
+        print('Exception lors de l\'envoi à l\'API: $e');
+      }
       return false;
     }
   }
 
-  Future<void> syncAnimals() async {
+  Future<void> syncAnimals(BuildContext context) async {
     final db = await DatabaseHelper.instance.database;
     List<Map<String, dynamic>> animals = await db.query(
       'animals',
@@ -54,7 +62,7 @@ class AnimalSyncService {
       whereArgs: [0],
     );
 
-    // bool allSyncSuccessful = true;
+    bool allSyncSuccessful = true;
 
     // Boucler sur chaque enregistrement pour le synchroniser
     for (var animal in animals) {
@@ -92,36 +100,40 @@ class AnimalSyncService {
             whereArgs: [animal['id']],
           );
         } else {
-          // allSyncSuccessful = false; // Marquer comme ayant échoué
+          allSyncSuccessful = false; // Marquer comme ayant échoué
         }
       } catch (e) {
-        print(
-          'Erreur lors de la synchronisation de l\'animal ${animal['id']}: $e',
-        );
-        // allSyncSuccessful = false; // Marquer comme ayant échoué
+        if (kDebugMode) {
+          print(
+            'Erreur lors de la synchronisation de l\'animal ${animal['id']}: $e',
+          );
+        }
+        allSyncSuccessful = false; // Marquer comme ayant échoué
       }
     }
 
     // Afficher un Snackbar en fonction du succès ou de l'échec
-    // if (allSyncSuccessful) {
-    //   _showSnackBar(
-    //     'Synchronisation réussie de tous les animaux !',
-    //     Colors.green,
-    //   );
-    // } else {
-    //   _showSnackBar(
-    //     'Certaines synchronisations ont échoué. Veuillez réessayer.',
-    //     Colors.red,
-    //   );
-    // }
+    if (allSyncSuccessful) {
+      _showSnackBar(
+        context,
+        'Synchronisation réussie !',
+        Colors.green,
+      );
+    } else {
+      _showSnackBar(
+        context,
+        'Certaines synchronisations ont échoué. Veuillez réessayer.',
+        Colors.red,
+      );
+    }
   }
 
-  // void _showSnackBar(String message, Color backgroundColor) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(message),
-  //       backgroundColor: backgroundColor,
-  //     ),
-  //   );
-  // }
+  void _showSnackBar(BuildContext context, String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
+  }
 }

@@ -231,11 +231,11 @@ class _SettingPageState extends State<SettingPage> {
                                   minimumSize: const Size(double.infinity, 50),
                                 ),
                                 onPressed: () async {
-                                  _animalSyncService.syncAnimals();
-                                  _reproductionSyncService.syncReproductions();
-                                  _alimentationSyncService.syncAlimentations();
-                                  _observationSyncService.syncObservations();
-                                  _sanitaryStateSyncService.syncSanitaryStates();                                  
+                                  _animalSyncService.syncAnimals(context);
+                                  _reproductionSyncService.syncReproductions(context);
+                                  _alimentationSyncService.syncAlimentations(context);
+                                  _observationSyncService.syncObservations(context);
+                                  _sanitaryStateSyncService.syncSanitaryStates(context);                                  
                                 },
                                 child: const Text(
                                   'Synchroniser les données',

@@ -1,6 +1,7 @@
 import 'package:biodivcenter/helpers/database_helper.dart';
 import 'package:biodivcenter/helpers/global.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class AlimentationSyncService {
@@ -39,7 +40,7 @@ class AlimentationSyncService {
     }
   }
 
-  Future<void> syncAlimentations() async {
+  Future<void> syncAlimentations(BuildContext context) async {
     final db = await DatabaseHelper.instance.database;
     List<Map<String, dynamic>> alimentations = await db.query(
       'alimentations',
@@ -47,7 +48,7 @@ class AlimentationSyncService {
       whereArgs: [0],
     );
 
-    // bool allSyncSuccessful = true;
+    bool allSyncSuccessful = true;
 
     // Boucler sur chaque enregistrement pour le synchroniser
     for (var alimentation in alimentations) {
@@ -76,7 +77,7 @@ class AlimentationSyncService {
             whereArgs: [alimentation['id']],
           );
         } else {
-          // allSyncSuccessful = false; // Marquer comme ayant échoué
+          allSyncSuccessful = false; // Marquer comme ayant échoué
         }
       } catch (e) {
         if (kDebugMode) {
@@ -84,30 +85,32 @@ class AlimentationSyncService {
           'Erreur lors de la synchronisation de l\'alimentation ${alimentation['id']}: $e',
         );
         }
-        // allSyncSuccessful = false; // Marquer comme ayant échoué
+        allSyncSuccessful = false; // Marquer comme ayant échoué
       }
     }
 
     // Afficher un Snackbar en fonction du succès ou de l'échec
-    // if (allSyncSuccessful) {
-    //   _showSnackBar(
-    //     'Synchronisation réussie de tous les animaux !',
-    //     Colors.green,
-    //   );
-    // } else {
-    //   _showSnackBar(
-    //     'Certaines synchronisations ont échoué. Veuillez réessayer.',
-    //     Colors.red,
-    //   );
-    // }
+    if (allSyncSuccessful) {
+      _showSnackBar(
+        context,
+        'Synchronisation réussie !',
+        Colors.green,
+      );
+    } else {
+      _showSnackBar(
+        context,
+        'Certaines synchronisations ont échoué. Veuillez réessayer.',
+        Colors.red,
+      );
+    }
   }
 
-  // void _showSnackBar(String message, Color backgroundColor) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(message),
-  //       backgroundColor: backgroundColor,
-  //     ),
-  //   );
-  // }
+  void _showSnackBar(BuildContext context, String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+      ),
+    );
+  }
 }
