@@ -24,10 +24,14 @@ class _SettingPageState extends State<SettingPage> {
   late Future<User> _user;
   final UserService _userService = UserService();
   final AnimalSyncService _animalSyncService = AnimalSyncService();
-  final ReproductionSyncService _reproductionSyncService = ReproductionSyncService();
-  final AlimentationSyncService _alimentationSyncService = AlimentationSyncService();
-  final ObservationSyncService _observationSyncService = ObservationSyncService();
-  final SanitaryStateSyncService _sanitaryStateSyncService = SanitaryStateSyncService();
+  final ReproductionSyncService _reproductionSyncService =
+      ReproductionSyncService();
+  final AlimentationSyncService _alimentationSyncService =
+      AlimentationSyncService();
+  final ObservationSyncService _observationSyncService =
+      ObservationSyncService();
+  final SanitaryStateSyncService _sanitaryStateSyncService =
+      SanitaryStateSyncService();
 
   Future<User> getUser() async {
     try {
@@ -147,7 +151,7 @@ class _SettingPageState extends State<SettingPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      user.role,
+                                      user.name,
                                       style: TextStyle(
                                         color: Color(primaryColor),
                                         fontWeight: FontWeight.bold,
@@ -232,10 +236,14 @@ class _SettingPageState extends State<SettingPage> {
                                 ),
                                 onPressed: () async {
                                   _animalSyncService.syncAnimals(context);
-                                  _reproductionSyncService.syncReproductions(context);
-                                  _alimentationSyncService.syncAlimentations(context);
-                                  _observationSyncService.syncObservations(context);
-                                  _sanitaryStateSyncService.syncSanitaryStates(context);                                  
+                                  _reproductionSyncService
+                                      .syncReproductions(context);
+                                  _alimentationSyncService
+                                      .syncAlimentations(context);
+                                  _observationSyncService
+                                      .syncObservations(context);
+                                  _sanitaryStateSyncService
+                                      .syncSanitaryStates(context);
                                 },
                                 child: const Text(
                                   'Synchroniser les données',

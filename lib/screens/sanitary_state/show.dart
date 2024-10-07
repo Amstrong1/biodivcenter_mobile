@@ -38,8 +38,8 @@ class SanitaryStateDetailsPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   infoRow(
                       "Coût",
-                      sanitaryState['cost'] != ''
-                          ? sanitaryState['cost']
+                      sanitaryState['cost'] != null
+                          ? sanitaryState['cost'].toString()
                           : 'Non défini'),
                   const SizedBox(height: 8),
                   infoRow(
@@ -50,7 +50,7 @@ class SanitaryStateDetailsPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   infoRow(
                       "Taille",
-                      sanitaryState['height'] != ''
+                      sanitaryState['height'] != null
                           ? sanitaryState['height'].toString()
                           : 'Inchangé'),
                   const SizedBox(height: 8),

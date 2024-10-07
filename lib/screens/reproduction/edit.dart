@@ -44,6 +44,7 @@ class _EditReproductionPageState extends State<EditReproductionPage> {
     super.initState();
     _getLocalAnimals();
 
+    _selectedAnimal = widget.reproduction['animal_id'].toString();
     _litterSizeController.text = widget.reproduction['litter_size'].toString();
     _observationController.text = widget.reproduction['observation'] ?? '';
     _selectedDate = widget.reproduction['date'];

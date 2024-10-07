@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:biodivcenter/components/info_card.dart';
 import 'package:biodivcenter/screens/observation/edit.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,20 @@ class ObservationDetailsPage extends StatelessWidget {
                   infoRow('Objet', observation['subject']),
                   const SizedBox(height: 8),
                   infoRow('Observation', observation['observation']),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: observation['photo'] != null
+                          ? Image.file(
+                              File(observation['photo'].toString()),
+                              fit: BoxFit.cover,
+                            )
+                          : Container(),
+                    ),
+                  ),
                 ],
               ),
             ),

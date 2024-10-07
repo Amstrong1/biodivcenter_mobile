@@ -31,11 +31,7 @@ class ReproductionDetailsPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   infoRow("Individu", reproduction['name']),
                   const SizedBox(height: 8),
-                  infoRow(
-                      "Portée",
-                      reproduction['litterSize'].toString() != 'null'
-                          ? reproduction['litterSize'].toString()
-                          : 'Non défini'),
+                  infoRow("Portée", reproduction['litter_size'].toString()),
                   const SizedBox(height: 8),
                   infoRow("Observation",
                       reproduction['observation'] ?? "Non défini"),

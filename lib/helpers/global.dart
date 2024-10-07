@@ -12,7 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ulid/ulid.dart';
 
-String apiBaseUrl = "http://192.168.149.162:8000";
+String apiBaseUrl = "http://192.168.100.162:8000";
 
 int primaryColor = 0xff1e9a2c;
 int secondaryColor = 0xffddf3d1;
@@ -104,10 +104,10 @@ Future<void> fetchAndSaveAnimals() async {
 
       // Insérer dans la base de données locale
       for (var animalData in animalsData) {
-        if (animalData['photo'] != null) {
-          File savedImage = await saveImageLocally(animalData['photo']!);
-          animalData = {...animalData, 'photo': savedImage.path};
-        }
+        // if (animalData['photo'] != null) {
+        //   File savedImage = await saveImageLocally(animalData['photo']!);
+        //   animalData = {...animalData, 'photo': savedImage.path};
+        // }
         await DatabaseHelper.instance.insertAnimal(animalData);
       }
     } else {

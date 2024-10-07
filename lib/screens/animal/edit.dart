@@ -344,7 +344,7 @@ class _EditAnimalPageState extends State<EditAnimalPage> {
         color: Colors.grey[200],
         child: _selectedImage != null
             ? Image.file(_selectedImage!, fit: BoxFit.cover)
-            : widget.animal['photo']
+            : widget.animal['photo'] != null
                 ? Image.file(
                     File(widget.animal['photo'].toString()),
                     fit: BoxFit.cover,
