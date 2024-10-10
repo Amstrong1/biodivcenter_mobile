@@ -60,7 +60,10 @@ class _SanitaryStatePageState extends State<SanitaryStatePage> {
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: CustomListTile(
                               title: sanitaryState['name'],
-                              subtitle: [sanitaryState['label']],
+                              subtitle: [
+                                sanitaryState['label'],
+                                sanitaryState['created_at'].split('T')[0]
+                              ],
                               onViewPressed: () {
                                 Navigator.push(
                                   context,

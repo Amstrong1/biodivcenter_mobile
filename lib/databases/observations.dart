@@ -6,6 +6,7 @@ class ObservationsTable {
       CREATE TABLE observations (
         id TEXT PRIMARY KEY,
         ong_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
         site_id TEXT NOT NULL,
         subject TEXT NOT NULL,
         observation TEXT NOT NULL,

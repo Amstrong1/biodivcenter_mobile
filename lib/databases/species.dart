@@ -6,6 +6,7 @@ class SpeciesTable {
       CREATE TABLE species (
         id TEXT PRIMARY KEY,
         french_name TEXT NOT NULL
+        on_site BOOLEAN NOT NULL
       )
     ''');
   }

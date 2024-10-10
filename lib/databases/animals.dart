@@ -6,6 +6,7 @@ class AnimalsTable {
       CREATE TABLE animals (
         id TEXT PRIMARY KEY,
         specie_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
         ong_id TEXT NOT NULL,
         site_id TEXT NOT NULL,
         name TEXT NOT NULL,

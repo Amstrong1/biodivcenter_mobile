@@ -37,6 +37,7 @@ class _AddObservationPageState extends State<AddObservationPage> {
         'id': Ulid().toString(),
         'ong_id': prefs['ong_id'],
         'site_id': prefs['site_id'],
+        'user_id': prefs['user_id'],
         'subject': _subjectController.text,
         'observation': _observationController.text,
         'photo': _selectedImage?.path,

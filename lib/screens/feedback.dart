@@ -167,6 +167,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
         );
       } finally {
         setState(() {
+          _textEditingController.clear();          
           _isLoading = false;
         });
       }

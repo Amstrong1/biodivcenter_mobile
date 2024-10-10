@@ -95,7 +95,7 @@ Future<void> fetchAndSaveAnimals() async {
           'state': animals['state'],
           'origin': animals['origin'],
           'parent_id': animals['parent_id'],
-          'photo': animals['photo'],
+          // 'photo': animals['photo'],
           'created_at': animals['created_at'],
           'updated_at': animals['updated_at'],
           'is_synced': 1,

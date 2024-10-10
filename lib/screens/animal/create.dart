@@ -110,6 +110,7 @@ class _AddAnimalPageState extends State<AddAnimalPage> {
           'id': Ulid().toString(),
           'ong_id': prefs['ong_id'],
           'site_id': prefs['site_id'],
+          'user_id': prefs['user_id'],
           'name': _nameController.text,
           'specie_id': _selectedSpecie!,
           'weight': _weightController.text,
